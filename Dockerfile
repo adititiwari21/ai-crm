@@ -42,11 +42,21 @@ RUN chmod -R 775 \
     bootstrap/cache \
     database
 
-RUN sed -i 's#DocumentRoot /var/www/html#DocumentRoot /var/www/html/public#' \
-    /etc/apache2/sites-available/000-default.conf
+RUN cat > /etc/apache2/sites-available/000-default.conf <<'EOF'
+<VirtualHost *:80>
+    DocumentRoot /var/www/html/public
 
-RUN sed -i 's#<Directory /var/www/>#<Directory /var/www/html/public>#' \
-    /etc/apache2/apache2.conf
+    <Directory /var/www/html/public>
+        Options Indexes FollowSymLinks
+        AllowOverride All
+        Require all granted
+        DirectoryIndex index.php
+    </Directory>
+
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+EOF
 
 EXPOSE 80
 
