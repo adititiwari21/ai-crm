@@ -3,11 +3,13 @@ FROM php:8.3-apache
 RUN apt-get update && apt-get install -y \
     libsqlite3-dev \
     libzip-dev \
+    libpq-dev \
     unzip \
     git \
     curl \
     && docker-php-ext-install \
     pdo_sqlite \
+    pdo_pgsql \
     zip \
     && a2enmod rewrite \
     && rm -rf /var/lib/apt/lists/*
@@ -23,27 +25,23 @@ RUN composer install \
     --optimize-autoloader \
     --no-interaction
 
-RUN touch database/database.sqlite
-
 ENV APP_ENV=production
 ENV APP_DEBUG=false
-ENV DB_CONNECTION=sqlite
-ENV DB_DATABASE=/var/www/html/database/database.sqlite
+ENV DB_CONNECTION=pgsql
 ENV SESSION_DRIVER=file
 ENV CACHE_STORE=file
 
 RUN chown -R www-data:www-data \
     storage \
-    bootstrap/cache \
-    database
+    bootstrap/cache
 
 RUN chmod -R 775 \
     storage \
-    bootstrap/cache \
-    database
+    bootstrap/cache
 
 RUN cat > /etc/apache2/sites-available/000-default.conf <<'EOF'
 <VirtualHost *:80>
+
     DocumentRoot /var/www/html/public
 
     <Directory /var/www/html/public>
@@ -55,6 +53,7 @@ RUN cat > /etc/apache2/sites-available/000-default.conf <<'EOF'
 
     ErrorLog ${APACHE_LOG_DIR}/error.log
     CustomLog ${APACHE_LOG_DIR}/access.log combined
+
 </VirtualHost>
 EOF
 
