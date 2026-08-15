@@ -23,19 +23,14 @@ RUN composer install \
     --optimize-autoloader \
     --no-interaction
 
-# Create SQLite database for the deployed app
 RUN touch database/database.sqlite
 
-# Use SQLite and file-based sessions/cache
 ENV APP_ENV=production
 ENV APP_DEBUG=false
 ENV DB_CONNECTION=sqlite
 ENV DB_DATABASE=/var/www/html/database/database.sqlite
 ENV SESSION_DRIVER=file
 ENV CACHE_STORE=file
-
-# Run all Laravel migrations during image build
-RUN php artisan migrate --force
 
 RUN chown -R www-data:www-data \
     storage \
@@ -55,4 +50,4 @@ RUN sed -i 's#<Directory /var/www/>#<Directory /var/www/html/public>#' \
 
 EXPOSE 80
 
-CMD ["apache2-foreground"]
+CMD ["sh", "-c", "php artisan migrate --force && apache2-foreground"]
