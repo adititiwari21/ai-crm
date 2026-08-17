@@ -23,14 +23,98 @@
                 #060d1f;
             color: #f8fafc;
             min-height: 100vh;
+            transition: background .25s ease, color .25s ease;
         }
+
+        /* ================= LIGHT MODE ================= */
+
+        body.light-mode {
+            background:
+                radial-gradient(circle at 15% 20%, rgba(69, 112, 255, .08), transparent 30%),
+                radial-gradient(circle at 80% 10%, rgba(130, 70, 220, .07), transparent 30%),
+                #eef3fb;
+            color: #172033;
+        }
+
+        body.light-mode .header {
+            background: rgba(255,255,255,.75);
+            border-bottom-color: rgba(15,23,42,.08);
+        }
+
+        body.light-mode .sidebar {
+            background: linear-gradient(180deg, #101a35 0%, #0b142b 100%);
+        }
+
+        body.light-mode .panel,
+        body.light-mode .stat-card {
+            background: linear-gradient(145deg, #ffffff, #f5f8ff);
+            border-color: rgba(15,23,42,.08);
+        }
+
+        body.light-mode .search {
+            background: #ffffff;
+            border-color: rgba(15,23,42,.10);
+        }
+
+        body.light-mode .search input {
+            color: #172033;
+        }
+
+        body.light-mode .search input::placeholder {
+            color: #8190aa;
+        }
+
+        body.light-mode .date-button {
+            background: #ffffff;
+            color: #172033;
+            border-color: rgba(15,23,42,.08);
+        }
+
+        body.light-mode .stat-label,
+        body.light-mode .page-heading p,
+        body.light-mode .item-date,
+        body.light-mode .item-info small {
+            color: #64748b;
+        }
+
+        body.light-mode .stat-value,
+        body.light-mode .panel-header h2,
+        body.light-mode .item-info strong {
+            color: #172033;
+        }
+
+        body.light-mode .company-card {
+            background: rgba(15,23,42,.025);
+            border-color: rgba(15,23,42,.07);
+        }
+
+        body.light-mode .company-name {
+            color: #172033;
+        }
+
+        body.light-mode .company-description {
+            color: #475569;
+        }
+
+        body.light-mode .ai-insight {
+            background:
+                radial-gradient(circle at 15% 15%, rgba(102,88,255,.12), transparent 30%),
+                linear-gradient(145deg, #eef1ff, #e9efff);
+        }
+
+        body.light-mode footer {
+            border-top-color: rgba(15,23,42,.08);
+            color: #64748b;
+        }
+
+        /* ================= LAYOUT ================= */
 
         .layout {
             display: flex;
             min-height: 100vh;
         }
 
-        /* SIDEBAR */
+        /* ================= SIDEBAR ================= */
 
         .sidebar {
             width: 263px;
@@ -102,6 +186,8 @@
             font-size: 19px;
         }
 
+        /* ================= AI SIDEBAR ================= */
+
         .sidebar-ai {
             position: absolute;
             left: 19px;
@@ -155,13 +241,15 @@
             text-decoration: none;
         }
 
-        /* MAIN */
+        /* ================= MAIN ================= */
 
         .main {
             width: calc(100% - 263px);
             margin-left: 263px;
             min-height: 100vh;
         }
+
+        /* ================= HEADER ================= */
 
         .header {
             height: 80px;
@@ -176,6 +264,7 @@
             font-size: 26px;
             color: #a9b6d1;
             margin-right: 31px;
+            cursor: default;
         }
 
         .search {
@@ -207,22 +296,39 @@
             margin-left: auto;
             display: flex;
             align-items: center;
-            gap: 25px;
+            gap: 18px;
         }
 
-        .header-icon {
+        .header-button {
+            width: 38px;
+            height: 38px;
+            border: 0;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             color: #d3dbec;
-            font-size: 22px;
-        }
-
-        .notification {
+            font-size: 20px;
+            background: transparent;
+            cursor: pointer;
+            transition: .2s ease;
             position: relative;
         }
 
-        .notification span {
+        .header-button:hover {
+            background: rgba(255,255,255,.06);
+        }
+
+        /* ================= NOTIFICATIONS ================= */
+
+        .notification-wrapper {
+            position: relative;
+        }
+
+        .notification-button span {
             position: absolute;
-            top: -8px;
-            right: -8px;
+            top: 1px;
+            right: 0;
             width: 18px;
             height: 18px;
             border-radius: 50%;
@@ -234,10 +340,79 @@
             font-size: 10px;
         }
 
+        .notification-menu {
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            width: 280px;
+            padding: 9px;
+            border-radius: 14px;
+            background: #101a31;
+            border: 1px solid rgba(255,255,255,.08);
+            box-shadow: 0 20px 50px rgba(0,0,0,.45);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-8px);
+            transition: .2s ease;
+            z-index: 100;
+        }
+
+        .notification-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .notification-title {
+            padding: 10px 12px;
+            font-size: 14px;
+            font-weight: 600;
+            border-bottom: 1px solid rgba(255,255,255,.06);
+            margin-bottom: 5px;
+        }
+
+        .notification-item {
+            display: block;
+            padding: 11px 12px;
+            border-radius: 9px;
+            color: #cbd5e1;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .notification-item:hover {
+            background: rgba(255,255,255,.05);
+        }
+
+        .notification-item strong {
+            display: block;
+            color: white;
+            margin-bottom: 3px;
+        }
+
+        .notification-item small {
+            color: #7f8ca6;
+        }
+
+        /* ================= PROFILE ================= */
+
+        .profile-wrapper {
+            position: relative;
+        }
+
         .profile {
             display: flex;
             align-items: center;
             gap: 11px;
+            padding: 7px 9px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: .2s ease;
+            user-select: none;
+        }
+
+        .profile:hover {
+            background: rgba(255,255,255,.055);
         }
 
         .avatar {
@@ -250,6 +425,7 @@
             background: linear-gradient(135deg, #d6e0ff, #7485bc);
             color: #16204b;
             font-weight: 800;
+            overflow: hidden;
         }
 
         .profile-info strong {
@@ -262,7 +438,74 @@
             font-size: 12px;
         }
 
-        /* PAGE */
+        .profile-arrow {
+            color: #9aa8c2;
+            font-size: 15px;
+            transition: .2s ease;
+        }
+
+        .profile.open .profile-arrow {
+            transform: rotate(180deg);
+        }
+
+        .profile-menu {
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            width: 220px;
+            padding: 8px;
+            border-radius: 14px;
+            background: #101a31;
+            border: 1px solid rgba(255,255,255,.08);
+            box-shadow: 0 20px 50px rgba(0,0,0,.45);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-8px);
+            transition: .2s ease;
+            z-index: 100;
+        }
+
+        .profile-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .profile-menu-header {
+            padding: 12px 13px;
+            border-bottom: 1px solid rgba(255,255,255,.06);
+            margin-bottom: 6px;
+        }
+
+        .profile-menu-header strong {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 3px;
+        }
+
+        .profile-menu-header small {
+            color: #7f8ca6;
+            font-size: 11px;
+        }
+
+        .profile-menu a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 11px 13px;
+            border-radius: 9px;
+            color: #cbd5e1;
+            text-decoration: none;
+            font-size: 13px;
+            transition: .2s ease;
+        }
+
+        .profile-menu a:hover {
+            background: rgba(255,255,255,.06);
+            color: white;
+        }
+
+        /* ================= PAGE ================= */
 
         .page {
             padding: 20px 26px 30px;
@@ -312,7 +555,7 @@
             cursor: pointer;
         }
 
-        /* STATS */
+        /* ================= STATS ================= */
 
         .stats {
             display: grid;
@@ -393,7 +636,7 @@
             font-weight: 600;
         }
 
-        /* PANELS */
+        /* ================= PANELS ================= */
 
         .charts,
         .bottom-grid,
@@ -448,7 +691,7 @@
             color: white;
         }
 
-        /* CHART */
+        /* ================= CHART ================= */
 
         .chart-area {
             height: 205px;
@@ -499,7 +742,7 @@
             font-size: 11px;
         }
 
-        /* DONUT */
+        /* ================= DONUT ================= */
 
         .category-content {
             height: 205px;
@@ -579,7 +822,7 @@
             color: #e1e6f1;
         }
 
-        /* LIST */
+        /* ================= LIST ================= */
 
         .list {
             display: flex;
@@ -667,7 +910,7 @@
             font-size: 13px;
         }
 
-        /* COMPANY */
+        /* ================= COMPANY ================= */
 
         .company-card {
             padding: 16px;
@@ -696,7 +939,7 @@
             color: #f1f5f9;
         }
 
-        /* AI INSIGHT */
+        /* ================= AI ================= */
 
         .ai-insight {
             padding: 18px;
@@ -729,6 +972,8 @@
             font-size: 12px;
         }
 
+        /* ================= FOOTER ================= */
+
         footer {
             height: 49px;
             border-top: 1px solid rgba(255,255,255,.035);
@@ -739,6 +984,8 @@
             font-size: 12px;
             margin-top: 10px;
         }
+
+        /* ================= RESPONSIVE ================= */
 
         @media(max-width: 1250px) {
 
@@ -796,16 +1043,16 @@
             .heading-actions {
                 display: none;
             }
+
+            .profile-info {
+                display: none;
+            }
         }
 
         @media(max-width: 600px) {
 
             .stats {
                 grid-template-columns: 1fr;
-            }
-
-            .profile-info {
-                display: none;
             }
 
             .search {
@@ -824,7 +1071,7 @@
 
 <div class="layout">
 
-    <!-- SIDEBAR -->
+    <!-- ================= SIDEBAR ================= -->
 
     <aside class="sidebar">
 
@@ -884,20 +1131,6 @@
                 </a>
             </li>
 
-            <li>
-                <a href="#">
-                    <span class="menu-icon">▥</span>
-                    Reports
-                </a>
-            </li>
-
-            <li>
-                <a href="#">
-                    <span class="menu-icon">⚙</span>
-                    Settings
-                </a>
-            </li>
-
         </ul>
 
         <div class="sidebar-ai">
@@ -912,7 +1145,10 @@
                 Get smart insights about your business data instantly.
             </p>
 
-            <a href="{{ route('ai.index') }}" class="ai-button">
+            <a
+                href="{{ route('ai.index') }}"
+                class="ai-button"
+            >
                 Ask AI Assistant
             </a>
 
@@ -921,9 +1157,11 @@
     </aside>
 
 
-    <!-- MAIN -->
+    <!-- ================= MAIN ================= -->
 
     <main class="main">
+
+        <!-- ================= HEADER ================= -->
 
         <header class="header">
 
@@ -944,30 +1182,147 @@
 
             <div class="header-right">
 
-                <div class="header-icon">
+                <!-- THEME TOGGLE -->
+
+                <button
+                    type="button"
+                    class="header-button"
+                    id="themeButton"
+                    title="Toggle theme"
+                >
                     ☼
-                </div>
+                </button>
 
-                <div class="header-icon notification">
-                    ♧
-                    <span>5</span>
-                </div>
 
-                <div class="profile">
+                <!-- NOTIFICATIONS -->
 
-                    <div class="avatar">
-                        A
+                <div class="notification-wrapper">
+
+                    <button
+                        type="button"
+                        class="header-button notification-button"
+                        id="notificationButton"
+                        title="Notifications"
+                    >
+                        ♧
+
+                        <span>5</span>
+
+                    </button>
+
+
+                    <div
+                        class="notification-menu"
+                        id="notificationMenu"
+                    >
+
+                        <div class="notification-title">
+                            Notifications
+                        </div>
+
+                        <div class="notification-item">
+
+                            <strong>
+                                CRM is running
+                            </strong>
+
+                            <small>
+                                Your dashboard is connected to your database.
+                            </small>
+
+                        </div>
+
+                        <div class="notification-item">
+
+                            <strong>
+                                Company analysis available
+                            </strong>
+
+                            <small>
+                                Review your latest analyzed companies.
+                            </small>
+
+                        </div>
+
+                        <div class="notification-item">
+
+                            <strong>
+                                AI Assistant ready
+                            </strong>
+
+                            <small>
+                                Ask questions about your CRM data.
+                            </small>
+
+                        </div>
+
                     </div>
 
-                    <div class="profile-info">
+                </div>
 
-                        <strong>Admin User</strong>
 
-                        <small>Administrator</small>
+                <!-- PROFILE -->
+
+                <div class="profile-wrapper">
+
+                    <div
+                        class="profile"
+                        id="profileButton"
+                    >
+
+                        <div class="avatar">
+                            A
+                        </div>
+
+                        <div class="profile-info">
+
+                            <strong>
+                                Admin User
+                            </strong>
+
+                            <small>
+                                Administrator
+                            </small>
+
+                        </div>
+
+                        <span class="profile-arrow">
+                            ⌄
+                        </span>
 
                     </div>
 
-                    <span>⌄</span>
+
+                    <div
+                        class="profile-menu"
+                        id="profileMenu"
+                    >
+
+                        <div class="profile-menu-header">
+
+                            <strong>
+                                Admin User
+                            </strong>
+
+                            <small>
+                                Administrator
+                            </small>
+
+                        </div>
+
+
+                        <a href="{{ route('user-details.list') }}">
+                            👤
+                            User Details
+                        </a>
+
+
+                        <a href="{{ route('ai.index') }}">
+                            🤖
+                            AI Assistant
+                        </a>
+
+                    </div>
 
                 </div>
 
@@ -976,9 +1331,11 @@
         </header>
 
 
+        <!-- ================= PAGE ================= -->
+
         <div class="page">
 
-            <!-- HEADING -->
+            <!-- PAGE HEADING -->
 
             <div class="page-heading">
 
@@ -996,12 +1353,8 @@
 
                 <div class="heading-actions">
 
-                    <div class="date-button">
-                        Live CRM Data
-                        <span>●</span>
-                    </div>
-
                     <button
+                        type="button"
                         class="export-button"
                         onclick="window.print()"
                     >
@@ -1013,7 +1366,7 @@
             </div>
 
 
-            <!-- REAL STAT CARDS -->
+            <!-- ================= PRIMARY STATS ================= -->
 
             <div class="stats">
 
@@ -1135,7 +1488,7 @@
             </div>
 
 
-            <!-- SECONDARY REAL METRICS -->
+            <!-- ================= SECONDARY STATS ================= -->
 
             <div class="stats">
 
@@ -1259,11 +1612,9 @@
             </div>
 
 
-            <!-- CHARTS -->
+            <!-- ================= CHARTS ================= -->
 
             <div class="charts">
-
-                <!-- REVENUE -->
 
                 <div class="panel">
 
@@ -1375,14 +1726,14 @@
                 </div>
 
 
-                <!-- CATEGORY -->
-
                 <div class="panel">
 
                     <div class="panel-header">
+
                         <h2>
                             Sales Overview
                         </h2>
+
                     </div>
 
                     <div class="category-content">
@@ -1439,11 +1790,9 @@
             </div>
 
 
-            <!-- RECENT SALES + INVOICES -->
+            <!-- ================= TRANSACTIONS + USERS ================= -->
 
             <div class="bottom-grid">
-
-                <!-- RECENT TRANSACTIONS -->
 
                 <div class="panel">
 
@@ -1476,13 +1825,11 @@
                                 <div class="item-info">
 
                                     <strong>
-
                                         @if($sale->client)
                                             {{ $sale->client->name }}
                                         @else
                                             Unknown Client
                                         @endif
-
                                     </strong>
 
                                     <small>
@@ -1517,8 +1864,6 @@
 
                 </div>
 
-
-                <!-- RECENT USER DETAILS -->
 
                 <div class="panel">
 
@@ -1581,11 +1926,9 @@
             </div>
 
 
-            <!-- COMPANY ANALYSIS + AI -->
+            <!-- ================= COMPANY + AI ================= -->
 
             <div class="crm-grid">
-
-                <!-- COMPANY ANALYSIS -->
 
                 <div class="panel">
 
@@ -1618,9 +1961,7 @@
                             </div>
 
                             <div class="company-description">
-
                                 {{ $company->website_description ?? 'No description available.' }}
-
                             </div>
 
                         </div>
@@ -1635,8 +1976,6 @@
 
                 </div>
 
-
-                <!-- AI INSIGHT -->
 
                 <div class="panel">
 
@@ -1681,5 +2020,175 @@
 
 </div>
 
+
+<!-- ================= JAVASCRIPT ================= -->
+
+<script>
+
+    /* ================= PROFILE ================= */
+
+    const profileButton =
+        document.getElementById("profileButton");
+
+    const profileMenu =
+        document.getElementById("profileMenu");
+
+
+    /* ================= NOTIFICATIONS ================= */
+
+    const notificationButton =
+        document.getElementById("notificationButton");
+
+    const notificationMenu =
+        document.getElementById("notificationMenu");
+
+
+    /* ================= THEME ================= */
+
+    const themeButton =
+        document.getElementById("themeButton");
+
+
+    /* ================= PROFILE DROPDOWN ================= */
+
+    profileButton.addEventListener(
+        "click",
+        function(event) {
+
+            event.stopPropagation();
+
+            profileButton.classList.toggle("open");
+
+            profileMenu.classList.toggle("show");
+
+            notificationMenu.classList.remove("show");
+
+        }
+    );
+
+
+    /* ================= NOTIFICATION DROPDOWN ================= */
+
+    notificationButton.addEventListener(
+        "click",
+        function(event) {
+
+            event.stopPropagation();
+
+            notificationMenu.classList.toggle("show");
+
+            profileButton.classList.remove("open");
+
+            profileMenu.classList.remove("show");
+
+        }
+    );
+
+
+    /* ================= CLOSE DROPDOWNS ================= */
+
+    document.addEventListener(
+        "click",
+        function() {
+
+            profileButton.classList.remove("open");
+
+            profileMenu.classList.remove("show");
+
+            notificationMenu.classList.remove("show");
+
+        }
+    );
+
+
+    profileMenu.addEventListener(
+        "click",
+        function(event) {
+
+            event.stopPropagation();
+
+        }
+    );
+
+
+    notificationMenu.addEventListener(
+        "click",
+        function(event) {
+
+            event.stopPropagation();
+
+        }
+    );
+
+
+    /* ================= THEME ================= */
+
+    function applySavedTheme() {
+
+        const savedTheme =
+            localStorage.getItem("ai-crm-theme");
+
+        if (savedTheme === "light") {
+
+            document.body.classList.add(
+                "light-mode"
+            );
+
+            themeButton.textContent = "☾";
+
+        } else {
+
+            document.body.classList.remove(
+                "light-mode"
+            );
+
+            themeButton.textContent = "☼";
+
+        }
+
+    }
+
+
+    themeButton.addEventListener(
+        "click",
+        function(event) {
+
+            event.stopPropagation();
+
+            document.body.classList.toggle(
+                "light-mode"
+            );
+
+
+            const isLight =
+                document.body.classList.contains(
+                    "light-mode"
+                );
+
+
+            localStorage.setItem(
+                "ai-crm-theme",
+                isLight
+                    ? "light"
+                    : "dark"
+            );
+
+
+            themeButton.textContent =
+                isLight
+                    ? "☾"
+                    : "☼";
+
+        }
+    );
+
+
+    /* ================= LOAD SAVED THEME ================= */
+
+    applySavedTheme();
+
+</script>
+
 </body>
+
 </html>
