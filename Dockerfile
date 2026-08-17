@@ -22,6 +22,7 @@ COPY . .
 
 RUN composer install \
     --no-dev \
+    --prefer-source \
     --optimize-autoloader \
     --no-interaction
 
