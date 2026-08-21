@@ -22,13 +22,9 @@ class DashboardController extends Controller
 
         $totalRevenue = Invoice::sum('amount');
 
-        $pendingInvoices = Invoice::where(
-            'status',
-            'Pending'
-        )->count();
+        $pendingInvoices = Invoice::where('status', 'Pending')->count();
 
         $totalProducts = Product::count();
-
 
         // =====================================================
         // USER / LEAD METRICS
@@ -36,10 +32,7 @@ class DashboardController extends Controller
 
         $totalUsers = UserDetail::count();
 
-        $analyzedCompanies = UserDetail::whereNotNull(
-            'website_title'
-        )->count();
-
+        $analyzedCompanies = UserDetail::whereNotNull('website_title')->count();
 
         // =====================================================
         // RECENT SALES
@@ -50,7 +43,6 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
-
         // =====================================================
         // RECENT USER DETAILS
         // =====================================================
@@ -59,18 +51,14 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
-
         // =====================================================
         // RECENT COMPANY ANALYSIS
         // =====================================================
 
-        $recentCompanyAnalyses = UserDetail::whereNotNull(
-            'website_title'
-        )
-        ->latest()
-        ->take(5)
-        ->get();
-
+        $recentCompanyAnalyses = UserDetail::whereNotNull('website_title')
+            ->latest()
+            ->take(5)
+            ->get();
 
         // =====================================================
         // DASHBOARD

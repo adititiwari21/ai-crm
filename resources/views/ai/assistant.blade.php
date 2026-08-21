@@ -1,594 +1,397 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-
-    <meta charset="UTF-8">
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>AI Assistant - AI CRM</title>
-
-    <style>
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: "Segoe UI", Arial, sans-serif;
-        }
-
-        body {
-            min-height: 100vh;
-            background:
-                radial-gradient(circle at 15% 10%, rgba(99,102,241,0.12), transparent 30%),
-                radial-gradient(circle at 85% 80%, rgba(139,92,246,0.10), transparent 30%),
-                #090d16;
-            color: #f8fafc;
-        }
-
-        .container {
-            max-width: 1050px;
-            margin: auto;
-            padding: 35px;
-        }
-
-
-        /* HEADER */
-
-        .header {
-            position: relative;
-            overflow: hidden;
-            background: linear-gradient(135deg, #111827, #151b2b);
-            border: 1px solid #263248;
-            border-radius: 20px;
-            padding: 30px;
-            margin-bottom: 22px;
-        }
-
-        .header::after {
-            content: "";
-            position: absolute;
-            width: 220px;
-            height: 220px;
-            right: -80px;
-            top: -100px;
-            background: rgba(99,102,241,0.12);
-            border-radius: 50%;
-        }
-
-        .ai-title {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .ai-icon {
-            width: 55px;
-            height: 55px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 15px;
-            background: linear-gradient(135deg, #6366f1, #8b5cf6);
-            font-size: 25px;
-            box-shadow: 0 10px 30px rgba(99,102,241,0.25);
-        }
-
-        .header h1 {
-            font-size: 27px;
-            margin-bottom: 5px;
-        }
-
-        .header p {
-            color: #94a3b8;
-            font-size: 13px;
-        }
-
-        .status {
-            display: inline-flex;
-            align-items: center;
-            gap: 7px;
-            margin-top: 20px;
-            color: #86efac;
-            background: rgba(34,197,94,0.08);
-            border: 1px solid rgba(34,197,94,0.15);
-            padding: 7px 11px;
-            border-radius: 20px;
-            font-size: 11px;
-        }
-
-        .status-dot {
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background: #4ade80;
-        }
-
-        .back {
-            display: inline-block;
-            margin-top: 20px;
-            color: #a5b4fc;
-            text-decoration: none;
-            font-size: 13px;
-        }
-
-        .back:hover {
-            color: white;
-        }
-
-
-        /* CHAT BOX */
-
-        .chat-box {
-            background: #111827;
-            border: 1px solid #1e293b;
-            padding: 28px;
-            border-radius: 18px;
-        }
-
-        .chat-heading {
-            margin-bottom: 7px;
-            font-size: 18px;
-        }
-
-        .chat-subtitle {
-            color: #64748b;
-            font-size: 12px;
-            margin-bottom: 22px;
-        }
-
-
-        /* QUESTION */
-
-        .question-box {
-            display: flex;
-            gap: 10px;
-            background: #0b111d;
-            border: 1px solid #253047;
-            padding: 7px;
-            border-radius: 12px;
-        }
-
-        input {
-            flex: 1;
-            padding: 13px 14px;
-            border: none;
-            outline: none;
-            background: transparent;
-            color: white;
-            font-size: 14px;
-        }
-
-        input::placeholder {
-            color: #64748b;
-        }
-
-        .ask-btn {
-            padding: 12px 21px;
-            border: none;
-            border-radius: 9px;
-            background: linear-gradient(135deg, #6366f1, #7c3aed);
-            color: white;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: 600;
-            transition: 0.2s ease;
-        }
-
-        .ask-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 7px 20px rgba(99,102,241,0.2);
-        }
-
-
-        /* ANSWER */
-
-        .answer {
-            margin-top: 22px;
-            padding: 20px;
-            background: rgba(99,102,241,0.07);
-            border: 1px solid rgba(99,102,241,0.25);
-            border-radius: 13px;
-        }
-
-        .answer-header {
-            display: flex;
-            align-items: center;
-            gap: 9px;
-            color: #a5b4fc;
-            font-size: 13px;
-            font-weight: 600;
-            margin-bottom: 11px;
-        }
-
-        .answer p {
-            color: #cbd5e1;
-            line-height: 1.7;
-            font-size: 13px;
-        }
-
-
-        /* QUICK QUESTIONS */
-
-        .examples {
-            margin-top: 28px;
-        }
-
-        .examples h3 {
-            font-size: 14px;
-            margin-bottom: 12px;
-        }
-
-        .quick-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 9px;
-        }
-
-        .quick-btn {
-            background: #0d1422;
-            color: #94a3b8;
-            border: 1px solid #253047;
-            padding: 9px 13px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 11px;
-            transition: 0.2s ease;
-        }
-
-        .quick-btn:hover {
-            border-color: #6366f1;
-            color: #c4b5fd;
-            background: rgba(99,102,241,0.08);
-        }
-
-
-        /* STATS */
-
-        .stats-title {
-            margin-top: 30px;
-            margin-bottom: 12px;
-            font-size: 14px;
-        }
-
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-        }
-
-        .stat {
-            background: #0d1422;
-            border: 1px solid #1e293b;
-            padding: 18px;
-            border-radius: 12px;
-            text-align: center;
-            transition: 0.2s ease;
-        }
-
-        .stat:hover {
-            transform: translateY(-2px);
-            border-color: #334155;
-        }
-
-        .stat strong {
-            display: block;
-            font-size: 22px;
-            margin-bottom: 7px;
-        }
-
-        .stat span {
-            font-size: 11px;
-            color: #64748b;
-        }
-
-
-        /* RESPONSIVE */
-
-        @media(max-width: 700px) {
-
-            .container {
-                padding: 20px;
-            }
-
-            .question-box {
-                flex-direction: column;
-            }
-
-            .ask-btn {
-                width: 100%;
-            }
-
-            .stats {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-        }
-
-    </style>
-
-</head>
-
-
-<body>
-
-<div class="container">
-
-
-    <!-- HEADER -->
-
-    <div class="header">
-
-        <div class="ai-title">
-
-            <div class="ai-icon">
-                🤖
-            </div>
-
-            <div>
-
-                <h1>
-                    AI CRM Assistant
-                </h1>
-
-                <p>
-                    Intelligent insights from your CRM data
-                </p>
-
-            </div>
-
-        </div>
-
-
-        <div class="status">
-
-            <span class="status-dot"></span>
-
-            AI Assistant Online
-
-        </div>
-
-
-        <a
-            href="{{ route('dashboard') }}"
-            class="back"
-        >
-            ← Back to Dashboard
-        </a>
-
-    </div>
-
-
-
-    <!-- CHAT -->
-
-    <div class="chat-box">
-
-        <h2 class="chat-heading">
-            Ask your AI Assistant
-        </h2>
-
-        <p class="chat-subtitle">
-            Ask questions about clients, sales, invoices and products.
-        </p>
-
-
-        <!-- QUESTION FORM -->
-
-        <form
-            action="{{ route('ai.ask') }}"
-            method="POST"
-        >
-
-            @csrf
-
-            <div class="question-box">
-
-                <input
-                    type="text"
-                    id="question"
-                    name="question"
-                    placeholder="Ask something like: How many clients do we have?"
-                    required
-                >
-
-                <button
-                    type="submit"
-                    class="ask-btn"
-                >
-                    Ask AI ✨
-                </button>
-
-            </div>
-
-        </form>
-
-
-
-        <!-- AI ANSWER -->
-
-        @if(session('answer'))
-
-            <div class="answer">
-
-                <div class="answer-header">
-
-                    🤖
-
-                    <span>
-                        AI Response
-                    </span>
-
-                </div>
-
-                <p>
-                    {{ session('answer') }}
-                </p>
-
-            </div>
-
-        @endif
-
-
-
-        <!-- QUICK QUESTIONS -->
-
-        <div class="examples">
-
-            <h3>
-                Quick Questions
-            </h3>
-
-
-            <div class="quick-buttons">
-
-
-                <button
-                    type="button"
-                    class="quick-btn"
-                    onclick="setQuestion('How many clients do we have?')"
-                >
-                    👥 Total Clients
-                </button>
-
-
-                <button
-                    type="button"
-                    class="quick-btn"
-                    onclick="setQuestion('What are our total sales?')"
-                >
-                    💰 Total Sales
-                </button>
-
-
-                <button
-                    type="button"
-                    class="quick-btn"
-                    onclick="setQuestion('What is our total revenue?')"
-                >
-                    📈 Total Revenue
-                </button>
-
-
-                <button
-                    type="button"
-                    class="quick-btn"
-                    onclick="setQuestion('How many pending invoices?')"
-                >
-                    📄 Pending Invoices
-                </button>
-
-
-                <button
-                    type="button"
-                    class="quick-btn"
-                    onclick="setQuestion('How many products do we have?')"
-                >
-                    📦 Total Products
-                </button>
-
-
-                <button
-                    type="button"
-                    class="quick-btn"
-                    onclick="setQuestion('Give me a CRM summary')"
-                >
-                    📊 CRM Summary
-                </button>
-
-
-            </div>
-
-        </div>
-
-
-
-        <!-- CRM STATS -->
-
-        <h3 class="stats-title">
-            CRM Data Categories
-        </h3>
-
-
-        <div class="stats">
-
-
-            <div class="stat">
-
-                <strong>
-                    👥
-                </strong>
-
-                <span>
-                    Clients
-                </span>
-
-            </div>
-
-
-            <div class="stat">
-
-                <strong>
-                    💰
-                </strong>
-
-                <span>
-                    Sales
-                </span>
-
-            </div>
-
-
-            <div class="stat">
-
-                <strong>
-                    📄
-                </strong>
-
-                <span>
-                    Invoices
-                </span>
-
-            </div>
-
-
-            <div class="stat">
-
-                <strong>
-                    📦
-                </strong>
-
-                <span>
-                    Products
-                </span>
-
-            </div>
-
-
-        </div>
-
-    </div>
-
-</div>
-
-
-
-<script>
-
-    function setQuestion(question) {
-
-        document.getElementById('question').value = question;
-
-        document.getElementById('question').focus();
-
+@extends('layouts.app')
+
+@section('title', 'AI Copilot Assistant - CRM Pro')
+
+@section('content')
+<style>
+    .ai-layout-grid {
+        display: grid;
+        grid-template-columns: 1fr 320px;
+        gap: 24px;
+        height: calc(100vh - 150px);
     }
 
+    @media (max-width: 1024px) {
+        .ai-layout-grid {
+            grid-template-columns: 1fr;
+            height: auto;
+        }
+    }
+
+    .chat-card {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    .chat-header {
+        padding: 16px 24px;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .ai-badge-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #10b981;
+        background: #ecfdf5;
+        padding: 4px 10px;
+        border-radius: 20px;
+    }
+    .dark .ai-badge-status {
+        background: rgba(16, 185, 129, 0.15);
+    }
+
+    .chat-messages-zone {
+        flex: 1;
+        overflow-y: auto;
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+    }
+
+    .msg-row {
+        display: flex;
+        gap: 12px;
+        max-width: 85%;
+    }
+
+    .msg-user {
+        align-self: flex-end;
+        flex-direction: row-reverse;
+    }
+
+    .msg-assistant {
+        align-self: flex-start;
+    }
+
+    .msg-avatar {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .avatar-ai {
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        color: white;
+        box-shadow: 0 4px 10px rgba(99,102,241,0.3);
+    }
+
+    .avatar-user {
+        background: #3b82f6;
+        color: white;
+    }
+
+    .msg-bubble {
+        padding: 14px 18px;
+        border-radius: var(--radius-lg);
+        font-size: 13.5px;
+        line-height: 1.6;
+    }
+
+    .bubble-user {
+        background: var(--primary);
+        color: #ffffff;
+        border-bottom-right-radius: 4px;
+    }
+
+    .bubble-assistant {
+        background: var(--bg-surface-hover);
+        border: 1px solid var(--border-color);
+        color: var(--text-main);
+        border-bottom-left-radius: 4px;
+    }
+
+    .bubble-assistant h3, .bubble-assistant h4 {
+        color: var(--primary);
+    }
+
+    .bubble-assistant ul, .bubble-assistant ol {
+        margin-left: 18px;
+        margin-top: 6px;
+    }
+
+    .chat-input-area {
+        padding: 16px 20px;
+        border-top: 1px solid var(--border-color);
+        background: var(--bg-surface);
+    }
+
+    .quick-prompts-bar {
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        padding-bottom: 12px;
+        scrollbar-width: none;
+    }
+
+    .prompt-chip {
+        background: var(--bg-surface-hover);
+        border: 1px solid var(--border-color);
+        padding: 6px 12px;
+        border-radius: 16px;
+        font-size: 12px;
+        color: var(--text-muted);
+        cursor: pointer;
+        white-space: nowrap;
+        transition: all 0.15s;
+    }
+    .prompt-chip:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+
+    .input-box-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: var(--bg-body);
+        border: 1px solid var(--border-color);
+        border-radius: 28px;
+        padding: 6px 8px 6px 18px;
+    }
+
+    .chat-input-field {
+        flex: 1;
+        border: none;
+        background: transparent;
+        outline: none;
+        color: var(--text-main);
+        font-size: 14px;
+    }
+
+    .btn-send {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: var(--primary);
+        color: white;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: transform 0.15s;
+    }
+    .btn-send:hover {
+        transform: scale(1.05);
+    }
+
+    /* RIGHT SIDEBAR STATS */
+    .ai-stats-panel {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .mini-stat-card {
+        padding: 16px;
+        border-radius: var(--radius-md);
+        background: var(--bg-surface);
+        border: 1px solid var(--border-color);
+    }
+
+    .mini-stat-title {
+        font-size: 11.5px;
+        font-weight: 600;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        letter-spacing: 0.05em;
+        margin-bottom: 4px;
+    }
+
+    .mini-stat-val {
+        font-family: var(--font-heading);
+        font-size: 20px;
+        font-weight: 800;
+        color: var(--text-main);
+    }
+</style>
+
+<div class="ai-layout-grid">
+    <!-- Main Chat Window -->
+    <div class="card chat-card">
+        <div class="chat-header">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 34px; height: 34px; border-radius: 10px; background: linear-gradient(135deg, #6366f1, #8b5cf6); display: flex; align-items: center; justify-content: center; color: white;">
+                    <i data-lucide="sparkles" style="width: 18px; height: 18px;"></i>
+                </div>
+                <div>
+                    <h2 style="font-size: 15px; font-weight: 700; color: var(--text-main);">CRM Pro AI Copilot</h2>
+                    <span style="font-size: 11.5px; color: var(--text-muted);">Connected to Live Database Context</span>
+                </div>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <div class="ai-badge-status">
+                    <span style="width: 6px; height: 6px; border-radius: 50%; background: #10b981;"></span>
+                    Online
+                </div>
+                <form action="{{ route('ai.clear') }}" method="POST" onsubmit="return confirm('Clear chat history?');">
+                    @csrf
+                    <button type="submit" class="btn btn-secondary btn-sm" title="Clear History">
+                        <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Chat Messages Area -->
+        <div class="chat-messages-zone" id="chatZone">
+            @foreach($messages as $msg)
+                <div class="msg-row {{ $msg->role === 'user' ? 'msg-user' : 'msg-assistant' }}">
+                    <div class="msg-avatar {{ $msg->role === 'user' ? 'avatar-user' : 'avatar-ai' }}">
+                        @if($msg->role === 'user')
+                            <i data-lucide="user" style="width: 16px; height: 16px;"></i>
+                        @else
+                            <i data-lucide="sparkles" style="width: 16px; height: 16px;"></i>
+                        @endif
+                    </div>
+                    <div class="msg-bubble {{ $msg->role === 'user' ? 'bubble-user' : 'bubble-assistant' }}">
+                        {!! nl2br(e($msg->content)) !!}
+                    </div>
+                </div>
+            @endforeach
+        </div>
+
+        <!-- Input Area -->
+        <div class="chat-input-area">
+            <div class="quick-prompts-bar">
+                <button type="button" class="prompt-chip" onclick="askQuick('Give me a full Financial & Revenue Summary')">💰 Revenue Summary</button>
+                <button type="button" class="prompt-chip" onclick="askQuick('Show me all active deals in the pipeline')">💼 Active Deals</button>
+                <button type="button" class="prompt-chip" onclick="askQuick('Which invoices are currently pending or overdue?')">📄 Pending Invoices</button>
+                <button type="button" class="prompt-chip" onclick="askQuick('Who are our top clients by lifetime revenue?')">👥 Top Clients</button>
+                <button type="button" class="prompt-chip" onclick="askQuick('Show me our hot leads with scores above 80')">🔥 Hot Leads</button>
+            </div>
+
+            <form id="aiChatForm" onsubmit="handleChatSubmit(event)">
+                <div class="input-box-wrapper">
+                    <input type="text" id="aiInput" class="chat-input-field" placeholder="Ask anything about clients, revenue, pipeline, or invoices..." autocomplete="off" required>
+                    <button type="submit" class="btn-send" id="btnSend">
+                        <i data-lucide="arrow-up" style="width: 18px; height: 18px;"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Right Live CRM Pulse Panel -->
+    <div class="ai-stats-panel">
+        <div style="font-size: 13px; font-weight: 700; color: var(--text-main); margin-bottom: 2px;">
+            <i data-lucide="activity" style="width: 15px; height: 15px; display: inline-block; vertical-align: -2px; color: var(--primary);"></i>
+            Live Database Pulse
+        </div>
+
+        <div class="mini-stat-card">
+            <div class="mini-stat-title">Collected Revenue</div>
+            <div class="mini-stat-val" style="color: var(--success);">${{ number_format($totalRevenue, 0) }}</div>
+        </div>
+
+        <div class="mini-stat-card">
+            <div class="mini-stat-title">Active Deals Pipeline</div>
+            <div class="mini-stat-val" style="color: var(--primary);">${{ number_format($openDealsSum, 0) }}</div>
+        </div>
+
+        <div class="mini-stat-card">
+            <div class="mini-stat-title">Pending Invoices</div>
+            <div class="mini-stat-val" style="color: #f59e0b;">{{ $pendingInvoicesCount }}</div>
+        </div>
+
+        <div class="mini-stat-card">
+            <div class="mini-stat-title">Accounts & Leads</div>
+            <div class="mini-stat-val">{{ $totalClients }} Clients / {{ $totalLeads }} Leads</div>
+        </div>
+
+        <div class="card card-p" style="background: linear-gradient(135deg, rgba(99,102,241,0.06), rgba(139,92,246,0.04));">
+            <div style="font-size: 12px; font-weight: 700; color: var(--primary); margin-bottom: 4px;">⚡ AI Tip</div>
+            <div style="font-size: 12px; color: var(--text-muted); line-height: 1.5;">
+                Ask the copilot to draft cold emails, calculate quarterly growth, or identify at-risk accounts.
+            </div>
+        </div>
+    </div>
+</div>
+
+@push('scripts')
+<script>
+    const chatZone = document.getElementById('chatZone');
+    chatZone.scrollTop = chatZone.scrollHeight;
+
+    function askQuick(q) {
+        document.getElementById('aiInput').value = q;
+        document.getElementById('aiChatForm').dispatchEvent(new Event('submit'));
+    }
+
+    async function handleChatSubmit(e) {
+        e.preventDefault();
+        const input = document.getElementById('aiInput');
+        const prompt = input.value.trim();
+        if (!prompt) return;
+
+        input.value = '';
+
+        // Append User Bubble
+        appendBubble('user', prompt);
+
+        // Append Loading Bubble
+        const loadingId = 'loading-' + Date.now();
+        appendBubble('assistant', 'Thinking and querying live CRM database...', loadingId);
+
+        try {
+            const res = await fetch("{{ route('ai.ask') }}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: JSON.stringify({ question: prompt, conversation_id: {{ $conversation->id }} })
+            });
+
+            const data = await res.json();
+            const loadingBubble = document.getElementById(loadingId);
+            if (loadingBubble) {
+                loadingBubble.innerHTML = data.html || data.message;
+            }
+        } catch (err) {
+            const loadingBubble = document.getElementById(loadingId);
+            if (loadingBubble) {
+                loadingBubble.innerHTML = 'Error communicating with AI. Please check your network or try again.';
+            }
+        }
+
+        chatZone.scrollTop = chatZone.scrollHeight;
+    }
+
+    function appendBubble(role, text, id = null) {
+        const row = document.createElement('div');
+        row.className = `msg-row ${role === 'user' ? 'msg-user' : 'msg-assistant'}`;
+        
+        const avatar = document.createElement('div');
+        avatar.className = `msg-avatar ${role === 'user' ? 'avatar-user' : 'avatar-ai'}`;
+        avatar.innerHTML = role === 'user' ? '<i data-lucide="user" style="width: 16px; height: 16px;"></i>' : '<i data-lucide="sparkles" style="width: 16px; height: 16px;"></i>';
+
+        const bubble = document.createElement('div');
+        bubble.className = `msg-bubble ${role === 'user' ? 'bubble-user' : 'bubble-assistant'}`;
+        if (id) bubble.id = id;
+        bubble.textContent = text;
+
+        row.appendChild(avatar);
+        row.appendChild(bubble);
+        chatZone.appendChild(row);
+        lucide.createIcons();
+        chatZone.scrollTop = chatZone.scrollHeight;
+    }
 </script>
-
-
-</body>
-
-</html>
+@endpush
+@endsection

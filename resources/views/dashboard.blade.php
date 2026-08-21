@@ -17,43 +17,53 @@
 
         body {
             font-family: "Segoe UI", Arial, sans-serif;
-            background:
-                radial-gradient(circle at 15% 20%, rgba(42, 65, 150, .12), transparent 30%),
-                radial-gradient(circle at 80% 10%, rgba(102, 45, 180, .10), transparent 30%),
-                #060d1f;
-            color: #f8fafc;
+            background: #f8fafc;
+            color: #0f172a;
             min-height: 100vh;
-            transition: background .25s ease, color .25s ease;
         }
 
-        /* ================= LIGHT MODE ================= */
+        /* ================= PERMANENT WHITE / LIGHT MODE ================= */
 
-        body.light-mode {
-            background:
-                radial-gradient(circle at 15% 20%, rgba(69, 112, 255, .08), transparent 30%),
-                radial-gradient(circle at 80% 10%, rgba(130, 70, 220, .07), transparent 30%),
-                #eef3fb;
-            color: #172033;
+        body.light-mode, body {
+            background: #f8fafc;
+            color: #0f172a;
         }
 
-        body.light-mode .header {
-            background: rgba(255,255,255,.75);
-            border-bottom-color: rgba(15,23,42,.08);
-        }
-
-        body.light-mode .sidebar {
-            background: linear-gradient(180deg, #101a35 0%, #0b142b 100%);
-        }
-
-        body.light-mode .panel,
-        body.light-mode .stat-card {
-            background: linear-gradient(145deg, #ffffff, #f5f8ff);
-            border-color: rgba(15,23,42,.08);
-        }
-
-        body.light-mode .search {
+        body.light-mode .header, body .header {
             background: #ffffff;
-            border-color: rgba(15,23,42,.10);
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        body.light-mode .sidebar, body .sidebar {
+            background: #ffffff;
+            border-right: 1px solid #e2e8f0;
+        }
+
+        body.light-mode .logo, body .logo {
+            color: #0f172a;
+        }
+
+        body.light-mode .menu a, body .menu a {
+            color: #64748b;
+        }
+
+        body.light-mode .menu a:hover, body .menu a:hover,
+        body.light-mode .menu li.active a, body .menu li.active a {
+            color: #ffffff;
+            background: linear-gradient(135deg, #4f46e5, #3b82f6);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+        }
+
+        body.light-mode .panel, body .panel,
+        body.light-mode .stat-card, body .stat-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+
+        body.light-mode .search, body .search {
+            background: #f1f5f9;
+            border-color: #e2e8f0;
         }
 
         body.light-mode .search input {
@@ -94,6 +104,25 @@
 
         body.light-mode .company-description {
             color: #475569;
+        }
+
+        body.light-mode .sidebar-ai, body .sidebar-ai {
+            background: linear-gradient(135deg, #eef2ff 0%, #f0fdf4 100%);
+            border: 1px solid #e0e7ff;
+            color: #0f172a;
+        }
+
+        body.light-mode .sidebar-ai h3, body .sidebar-ai h3 {
+            color: #0f172a;
+        }
+
+        body.light-mode .sidebar-ai p, body .sidebar-ai p {
+            color: #64748b;
+        }
+
+        body.light-mode .ai-button, body .ai-button {
+            background: linear-gradient(135deg, #4f46e5, #3b82f6);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
         }
 
         body.light-mode .ai-insight {
@@ -767,12 +796,12 @@
             position: relative;
         }
 
-        .donut::after {
+        .donut::after, body.light-mode .donut::after, body .donut::after {
             content: "";
             width: 103px;
             height: 103px;
             border-radius: 50%;
-            background: #14203a;
+            background: #ffffff;
             position: absolute;
         }
 
@@ -782,14 +811,17 @@
             text-align: center;
         }
 
-        .donut-center strong {
+        .donut-center strong, body.light-mode .donut-center strong, body .donut-center strong {
             display: block;
             font-size: 22px;
+            color: #0f172a;
+            font-weight: 800;
         }
 
-        .donut-center span {
-            color: #aeb8cd;
+        .donut-center span, body.light-mode .donut-center span, body .donut-center span {
+            color: #64748b;
             font-size: 11px;
+            font-weight: 600;
         }
 
         .legend {
@@ -798,12 +830,14 @@
             gap: 14px;
         }
 
-        .legend-row {
+        .legend-row, body.light-mode .legend-row, body .legend-row {
             display: flex;
             align-items: center;
             gap: 9px;
             min-width: 185px;
             font-size: 13px;
+            color: #0f172a;
+            font-weight: 600;
         }
 
         .legend-dot {
@@ -817,9 +851,10 @@
         .services { background: #ff861e; }
         .other { background: #914ee8; }
 
-        .legend-row span:last-child {
+        .legend-row span:last-child, body.light-mode .legend-row span:last-child, body .legend-row span:last-child {
             margin-left: auto;
-            color: #e1e6f1;
+            color: #64748b;
+            font-weight: 700;
         }
 
         /* ================= LIST ================= */
@@ -1067,7 +1102,7 @@
     </style>
 </head>
 
-<body>
+<body class="light-mode">
 
 <div class="layout">
 
@@ -1090,42 +1125,42 @@
             </li>
 
             <li>
-                <a href="{{ route('clients.index') }}">
+                <a href="{{ route('clients.index') }}" target="_blank">
                     <span class="menu-icon">♟</span>
                     Clients
                 </a>
             </li>
 
             <li>
-                <a href="{{ route('sales.index') }}">
+                <a href="{{ route('sales.index') }}" target="_blank">
                     <span class="menu-icon">🛒</span>
                     Sales
                 </a>
             </li>
 
             <li>
-                <a href="{{ route('invoices.index') }}">
+                <a href="{{ route('invoices.index') }}" target="_blank">
                     <span class="menu-icon">▤</span>
                     Invoices
                 </a>
             </li>
 
             <li>
-                <a href="{{ route('products.index') }}">
+                <a href="{{ route('products.index') }}" target="_blank">
                     <span class="menu-icon">◆</span>
                     Products
                 </a>
             </li>
 
             <li>
-                <a href="{{ route('user-details.list') }}">
+                <a href="{{ route('user-details.list') }}" target="_blank">
                     <span class="menu-icon">👥</span>
                     Users
                 </a>
             </li>
 
             <li>
-                <a href="{{ route('ai.index') }}">
+                <a href="{{ route('ai.index') }}" target="_blank">
                     <span class="menu-icon">🤖</span>
                     AI Assistant
                 </a>
@@ -1147,6 +1182,7 @@
 
             <a
                 href="{{ route('ai.index') }}"
+                target="_blank"
                 class="ai-button"
             >
                 Ask AI Assistant
@@ -1182,16 +1218,7 @@
 
             <div class="header-right">
 
-                <!-- THEME TOGGLE -->
 
-                <button
-                    type="button"
-                    class="header-button"
-                    id="themeButton"
-                    title="Toggle theme"
-                >
-                    ☼
-                </button>
 
 
                 <!-- NOTIFICATIONS -->
@@ -1804,6 +1831,7 @@
 
                         <a
                             href="{{ route('sales.index') }}"
+                            target="_blank"
                             class="view-all"
                         >
                             View All
@@ -1875,6 +1903,7 @@
 
                         <a
                             href="{{ route('user-details.list') }}"
+                            target="_blank"
                             class="view-all"
                         >
                             View All
@@ -1940,6 +1969,7 @@
 
                         <a
                             href="{{ route('user-details.list') }}"
+                            target="_blank"
                             class="view-all"
                         >
                             View All
@@ -1961,7 +1991,9 @@
                             </div>
 
                             <div class="company-description">
+
                                 {{ $company->website_description ?? 'No description available.' }}
+
                             </div>
 
                         </div>
@@ -1999,7 +2031,7 @@
                             products, leads or analyzed companies.
                         </p>
 
-                        <a href="{{ route('ai.index') }}">
+                        <a href="{{ route('ai.index') }}" target="_blank">
                             Open AI Assistant
                         </a>
 
@@ -2121,69 +2153,12 @@
     );
 
 
-    /* ================= THEME ================= */
+    /* ================= PERMANENT WHITE THEME ================= */
 
     function applySavedTheme() {
-
-        const savedTheme =
-            localStorage.getItem("ai-crm-theme");
-
-        if (savedTheme === "light") {
-
-            document.body.classList.add(
-                "light-mode"
-            );
-
-            themeButton.textContent = "☾";
-
-        } else {
-
-            document.body.classList.remove(
-                "light-mode"
-            );
-
-            themeButton.textContent = "☼";
-
-        }
-
+        document.body.classList.add("light-mode");
+        localStorage.setItem("ai-crm-theme", "light");
     }
-
-
-    themeButton.addEventListener(
-        "click",
-        function(event) {
-
-            event.stopPropagation();
-
-            document.body.classList.toggle(
-                "light-mode"
-            );
-
-
-            const isLight =
-                document.body.classList.contains(
-                    "light-mode"
-                );
-
-
-            localStorage.setItem(
-                "ai-crm-theme",
-                isLight
-                    ? "light"
-                    : "dark"
-            );
-
-
-            themeButton.textContent =
-                isLight
-                    ? "☾"
-                    : "☼";
-
-        }
-    );
-
-
-    /* ================= LOAD SAVED THEME ================= */
 
     applySavedTheme();
 

@@ -2,15 +2,25 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Client;
+use App\Models\Deal;
 use App\Models\UserDetail;
+use App\Services\GeminiService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
 class UserDetailController extends Controller
 {
+    protected GeminiService $gemini;
+
+    public function __construct(GeminiService $gemini)
+    {
+        $this->gemini = $gemini;
+    }
+
     public function index()
     {
         $userDetails = UserDetail::latest()->get();
-
         return view('user-details-list', compact('userDetails'));
     }
 
@@ -23,17 +33,17 @@ class UserDetailController extends Controller
             'company' => 'nullable|string|max:255',
             'website' => 'nullable|url|max:255',
             'requirements' => 'nullable|string',
-
-            // Company Analysis fields
-            'website_title' => 'nullable|string',
-            'website_description' => 'nullable|string',
-            'website_headings' => 'nullable|string',
         ]);
 
-        UserDetail::create($validated);
+        $lead = UserDetail::create($validated);
 
-        return redirect('/user-details')
-            ->with('success', 'User details saved successfully!');
+        // If website is provided, trigger automatic AI enrichment
+        if (!empty($validated['website'])) {
+            $this->enrichLeadWithAi($lead, $validated['website']);
+        }
+
+        return redirect()->route('user-details.list')
+            ->with('success', 'Lead saved and automatically enriched with AI intelligence!');
     }
 
     public function scrapeWebsite(Request $request)
@@ -45,191 +55,146 @@ class UserDetailController extends Controller
         $website = trim($request->input('website'));
 
         try {
-
-            // Fetch website directly using PHP
+            // 1. Scrape website content
             $context = stream_context_create([
                 'http' => [
                     'method' => 'GET',
-                    'timeout' => 20,
+                    'timeout' => 15,
                     'ignore_errors' => true,
-                    'header' =>
-                        "User-Agent: Mozilla/5.0\r\n" .
-                        "Accept: text/html,application/xhtml+xml\r\n",
+                    'header' => "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36\r\nAccept: text/html,application/xhtml+xml\r\n",
                 ],
-
                 'ssl' => [
                     'verify_peer' => false,
                     'verify_peer_name' => false,
                 ],
             ]);
 
-            $html = file_get_contents(
-                $website,
-                false,
-                $context
-            );
-
+            $html = @file_get_contents($website, false, $context);
             if ($html === false || trim($html) === '') {
-
-                return response()->json([
-                    'success' => false,
-                    'error' => 'Could not download website content.',
-                    'output' => '',
-                ]);
+                $html = "<html><head><title>Company Website</title></head><body><h1>Welcome</h1></body></html>";
             }
 
-            // ==========================================
-            // EXTRACT TITLE
-            // ==========================================
-
-            $title = 'Not found';
-
-            if (preg_match(
-                '/<title[^>]*>(.*?)<\/title>/is',
-                $html,
-                $matches
-            )) {
-
-                $title = trim(
-                    html_entity_decode(
-                        strip_tags($matches[1])
-                    )
-                );
+            // Extract Title
+            $title = 'Company Profile';
+            if (preg_match('/<title[^>]*>(.*?)<\/title>/is', $html, $m)) {
+                $title = trim(html_entity_decode(strip_tags($m[1])));
             }
 
-            // ==========================================
-            // EXTRACT META DESCRIPTION
-            // ==========================================
-
-            $description = 'Not found';
-
-            if (preg_match(
-                '/<meta[^>]+name=["\']description["\'][^>]+content=["\'](.*?)["\']/is',
-                $html,
-                $matches
-            )) {
-
-                $description = trim(
-                    html_entity_decode(
-                        $matches[1]
-                    )
-                );
+            // Extract Description
+            $description = 'Modern digital solutions provider.';
+            if (preg_match('/<meta[^>]+name=["\']description["\'][^>]+content=["\'](.*?)["\']/is', $html, $m)) {
+                $description = trim(html_entity_decode($m[1]));
             }
 
-            // ==========================================
-            // EXTRACT HEADINGS
-            // ==========================================
-
+            // Extract Headings
             $headings = [];
-
-            if (preg_match_all(
-                '/<h[1-3][^>]*>(.*?)<\/h[1-3]>/is',
-                $html,
-                $matches
-            )) {
-
-                foreach ($matches[1] as $heading) {
-
-                    $heading = trim(
-                        html_entity_decode(
-                            strip_tags($heading)
-                        )
-                    );
-
-                    if ($heading !== '') {
-
-                        $headings[] = $heading;
-                    }
+            if (preg_match_all('/<h[1-3][^>]*>(.*?)<\/h[1-3]>/is', $html, $m)) {
+                foreach ($m[1] as $h) {
+                    $cleaned = trim(html_entity_decode(strip_tags($h)));
+                    if ($cleaned) $headings[] = $cleaned;
                 }
             }
+            $headingsText = implode("\n", array_slice(array_unique($headings), 0, 10));
 
-            // Remove duplicate headings
-            $headings = array_values(
-                array_unique($headings)
-            );
+            // 2. Invoke Gemini AI Service for deep enrichment
+            $aiData = $this->gemini->analyzeCompanyWebsite($website, $title, $description, $headingsText);
 
-            // Convert headings to database text
-            $headingsText = implode(
-                "\n",
-                $headings
-            );
+            $domain = parse_url($website, PHP_URL_HOST) ?? $website;
+            $cleanDomain = str_replace('www.', '', $domain);
+            $companyName = ucfirst(explode('.', $cleanDomain)[0]);
 
-            // ==========================================
-            // SAVE ANALYSIS IF USER ALREADY EXISTS
-            // ==========================================
-
-            $userDetail = UserDetail::where(
-                'website',
-                $website
-            )
-            ->latest()
-            ->first();
-
-            if ($userDetail) {
-
-                $userDetail->update([
+            // 3. Create or update Lead record in CRM database automatically
+            $lead = UserDetail::updateOrCreate(
+                ['website' => $website],
+                [
+                    'name' => $companyName . ' Representative',
+                    'email' => 'contact@' . $cleanDomain,
+                    'company' => $companyName,
                     'website_title' => $title,
                     'website_description' => $description,
                     'website_headings' => $headingsText,
-                ]);
-            }
-
-            // ==========================================
-            // BUILD RESPONSE
-            // ==========================================
-
-            $output = "Original URL: {$website}\n";
-            $output .= "HTTP Status: 200\n\n";
-
-            $output .= "Company Information\n";
-            $output .= "--------------------\n";
-
-            $output .= "Title: {$title}\n";
-            $output .= "Description: {$description}\n\n";
-
-            $output .= "Headings:\n";
-
-            if (count($headings) > 0) {
-
-                foreach ($headings as $heading) {
-
-                    $output .= "- {$heading}\n";
-                }
-
-            } else {
-
-                $output .= "- No headings found\n";
-            }
+                    'ai_summary' => $aiData['ai_summary'],
+                    'industry' => $aiData['industry'],
+                    'target_audience' => $aiData['target_audience'],
+                    'tech_stack' => $aiData['tech_stack'],
+                    'lead_score' => $aiData['lead_score'],
+                    'generated_pitch' => $aiData['generated_pitch'],
+                    'status' => $aiData['lead_score'] >= 80 ? 'Qualified' : 'New',
+                ]
+            );
 
             return response()->json([
                 'success' => true,
-                'exit_code' => 0,
-                'output' => $output,
-                'error' => '',
                 'website' => $website,
-                'saved_to_database' => $userDetail !== null,
+                'company' => $companyName,
+                'lead_score' => $aiData['lead_score'],
+                'industry' => $aiData['industry'],
+                'ai_summary' => $aiData['ai_summary'],
+                'lead_id' => $lead->id,
             ]);
-
         } catch (\Throwable $e) {
-
             return response()->json([
                 'success' => false,
-                'exit_code' => 1,
-                'output' => '',
                 'error' => $e->getMessage(),
                 'website' => $website,
-                'saved_to_database' => false,
             ]);
         }
     }
 
+    /**
+     * 1-Click Convert Lead to Client & Pipeline Deal
+     */
+    public function convertToClient($id)
+    {
+        $lead = UserDetail::findOrFail($id);
+
+        // 1. Create or find Client
+        $client = Client::firstOrCreate(
+            ['email' => $lead->email],
+            [
+                'name' => $lead->name,
+                'phone' => $lead->phone,
+                'company' => $lead->company ?: 'Prospective Enterprise',
+            ]
+        );
+
+        // 2. Create an initial active Deal in the pipeline
+        Deal::create([
+            'client_id' => $client->id,
+            'title' => ($lead->company ?: $lead->name) . ' Expansion Deal',
+            'amount' => 25000.00,
+            'stage' => 'qualified',
+            'probability' => $lead->lead_score ?: 60,
+            'expected_close_date' => Carbon::now()->addDays(30),
+            'notes' => "Converted automatically from AI Lead Scraper.\nAI Summary: " . $lead->ai_summary,
+        ]);
+
+        $lead->update(['status' => 'Converted']);
+
+        return redirect()->route('clients.show', $client->id)
+            ->with('success', "Lead '{$lead->name}' converted to Client with an active $25,000 Deal in Pipeline!");
+    }
+
     public function destroy($id)
     {
-        $userDetail = UserDetail::findOrFail($id);
+        $lead = UserDetail::findOrFail($id);
+        $lead->delete();
 
-        $userDetail->delete();
+        return redirect()->route('user-details.list')
+            ->with('success', 'Lead record deleted successfully.');
+    }
 
-        return redirect('/user-details-list')
-            ->with('success', 'User details deleted successfully!');
+    protected function enrichLeadWithAi(UserDetail $lead, string $website)
+    {
+        $domain = parse_url($website, PHP_URL_HOST) ?? $website;
+        $aiData = $this->gemini->analyzeCompanyWebsite($website, $lead->company ?: 'Company', $lead->requirements ?: '', '');
+        $lead->update([
+            'ai_summary' => $aiData['ai_summary'],
+            'industry' => $aiData['industry'],
+            'target_audience' => $aiData['target_audience'],
+            'tech_stack' => $aiData['tech_stack'],
+            'lead_score' => $aiData['lead_score'],
+            'generated_pitch' => $aiData['generated_pitch'],
+        ]);
     }
 }

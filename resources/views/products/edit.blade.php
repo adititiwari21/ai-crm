@@ -1,182 +1,54 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('layouts.app')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+@section('title', 'Edit Product - ' . $product->name)
 
-    <title>Edit Product - AI CRM</title>
-
-    <style>
-        * {
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
-
-        body {
-            margin: 0;
-            background: #f5f7fb;
-            color: #1f2937;
-        }
-
-        .container {
-            max-width: 700px;
-            margin: 50px auto;
-            padding: 20px;
-        }
-
-        .box {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-        }
-
-        h1 {
-            margin-bottom: 25px;
-        }
-
-        .form-group {
-            margin-bottom: 18px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 7px;
-            font-weight: bold;
-        }
-
-        input,
-        textarea {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 7px;
-        }
-
-        textarea {
-            min-height: 100px;
-        }
-
-        button {
-            padding: 12px 20px;
-            background: #2563eb;
-            color: white;
-            border: none;
-            border-radius: 7px;
-            cursor: pointer;
-        }
-
-        .back {
-            display: inline-block;
-            margin-bottom: 20px;
-            color: #2563eb;
-            text-decoration: none;
-        }
-    </style>
-</head>
-
-<body>
-
-<div class="container">
-
-    <a href="{{ route('products.index') }}" class="back">
-        ← Back to Products
-    </a>
-
-    <div class="box">
-
-        <h1>✏️ Edit Product</h1>
-
-        <form
-            action="{{ route('products.update', $product->id) }}"
-            method="POST"
-        >
-
-            @csrf
-
-            @method('PUT')
-
-            <div class="form-group">
-
-                <label>
-                    Product Name
-                </label>
-
-                <input
-                    type="text"
-                    name="name"
-                    value="{{ $product->name }}"
-                    required
-                >
-
-            </div>
-
-            <div class="form-group">
-
-                <label>
-                    Category
-                </label>
-
-                <input
-                    type="text"
-                    name="category"
-                    value="{{ $product->category }}"
-                >
-
-            </div>
-
-            <div class="form-group">
-
-                <label>
-                    Price
-                </label>
-
-                <input
-                    type="number"
-                    step="0.01"
-                    name="price"
-                    value="{{ $product->price }}"
-                    required
-                >
-
-            </div>
-
-            <div class="form-group">
-
-                <label>
-                    Stock
-                </label>
-
-                <input
-                    type="number"
-                    name="stock"
-                    value="{{ $product->stock }}"
-                    required
-                >
-
-            </div>
-
-            <div class="form-group">
-
-                <label>
-                    Description
-                </label>
-
-                <textarea name="description">{{ $product->description }}</textarea>
-
-            </div>
-
-            <button type="submit">
-                Update Product
-            </button>
-
-        </form>
-
+@section('content')
+<div style="max-width: 600px; margin: 0 auto;">
+    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
+        <a href="{{ route('products.index') }}" class="btn btn-secondary btn-sm">
+            <i data-lucide="arrow-left" style="width: 14px; height: 14px;"></i>
+            <span>Back</span>
+        </a>
+        <h1 class="page-title" style="margin-bottom: 0;">Edit Product Details</h1>
     </div>
 
+    <div class="card card-p">
+        <form action="{{ route('products.update', $product->id) }}" method="POST">
+            @csrf
+            @method('PUT')
+
+            <div style="display: flex; flex-direction: column; gap: 16px;">
+                <div>
+                    <label class="form-label">Product Name *</label>
+                    <input type="text" name="name" class="form-control" value="{{ $product->name }}" required>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div>
+                        <label class="form-label">Category</label>
+                        <input type="text" name="category" class="form-control" value="{{ $product->category }}">
+                    </div>
+                    <div>
+                        <label class="form-label">Price ($) *</label>
+                        <input type="number" step="0.01" name="price" class="form-control" value="{{ $product->price }}" required>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="form-label">Stock Units *</label>
+                    <input type="number" name="stock" class="form-control" value="{{ $product->stock }}" required>
+                </div>
+
+                <div>
+                    <label class="form-label">Description</label>
+                    <textarea name="description" class="form-control" rows="4">{{ $product->description }}</textarea>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </div>
+        </form>
+    </div>
 </div>
-
-</body>
-
-</html>
+@endsection
