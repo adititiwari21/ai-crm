@@ -28,19 +28,17 @@ RUN composer install \
 
 ENV APP_ENV=production
 ENV APP_DEBUG=false
-ENV DB_CONNECTION=pgsql
+ENV DB_CONNECTION=sqlite
+ENV DB_DATABASE=/var/www/html/database/database.sqlite
 ENV SESSION_DRIVER=file
 ENV CACHE_STORE=file
 ENV APP_URL=https://ai-crm-nowm.onrender.com
 ENV ASSET_URL=https://ai-crm-nowm.onrender.com
 
-RUN chown -R www-data:www-data \
-    storage \
-    bootstrap/cache
-
-RUN chmod -R 775 \
-    storage \
-    bootstrap/cache
+RUN mkdir -p database storage/framework/views storage/framework/sessions storage/framework/cache bootstrap/cache \
+    && touch database/database.sqlite \
+    && chown -R www-data:www-data database storage bootstrap/cache \
+    && chmod -R 777 database storage bootstrap/cache
 
 RUN cat > /etc/apache2/sites-available/000-default.conf <<'EOF'
 <VirtualHost *:80>
@@ -64,4 +62,4 @@ EOF
 
 EXPOSE 80
 
-CMD ["sh", "-c", "php artisan migrate --force && apache2-foreground"]
+CMD ["sh", "-c", "touch /var/www/html/database/database.sqlite && chown -R www-data:www-data /var/www/html/database /var/www/html/storage /var/www/html/bootstrap/cache && chmod -R 777 /var/www/html/database /var/www/html/storage /var/www/html/bootstrap/cache && php artisan migrate --force && apache2-foreground"]

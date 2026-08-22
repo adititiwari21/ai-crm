@@ -56,7 +56,7 @@ class UserDetailController extends Controller
         $request->merge(['website' => $websiteInput]);
 
         $request->validate([
-            'website' => 'required|url|max:255',
+            'website' => 'required|string|max:1000',
         ]);
 
         $website = $websiteInput;

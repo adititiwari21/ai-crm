@@ -313,6 +313,28 @@
                     </div>
                 @endif
 
+                @if(session('error'))
+                    <div style="margin-bottom: 18px; padding: 12px 18px; border-radius: var(--radius-md); background-color: #fef2f2; border: 1px solid #fecaca; color: #991b1b; font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: space-between;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <i data-lucide="alert-circle" style="width: 16px; height: 16px; color: #ef4444;"></i>
+                            <span>{{ session('error') }}</span>
+                        </div>
+                        <button type="button" onclick="this.parentElement.remove()" style="background: none; border: none; color: #991b1b; cursor: pointer;">
+                            <i data-lucide="x" style="width: 14px; height: 14px;"></i>
+                        </button>
+                    </div>
+                @endif
+
+                @if($errors->any())
+                    <div style="margin-bottom: 18px; padding: 12px 18px; border-radius: var(--radius-md); background-color: #fffbeb; border: 1px solid #fde68a; color: #92400e; font-size: 13px; font-weight: 600;">
+                        <ul style="margin: 0; padding-left: 18px;">
+                            @foreach($errors->all() as $err)
+                                <li>{{ $err }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
                 @yield('content')
             </main>
         </div>
