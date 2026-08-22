@@ -315,11 +315,13 @@ Return exact JSON format:
     protected function detectIndustry(string $title, string $desc, string $headings): string
     {
         $all = strtolower("{$title} {$desc} {$headings}");
-        if (str_contains($all, 'pay') || str_contains($all, 'bank') || str_contains($all, 'fintech') || str_contains($all, 'card') || str_contains($all, 'finance')) return 'FinTech & Payments';
-        if (str_contains($all, 'health') || str_contains($all, 'med') || str_contains($all, 'patient') || str_contains($all, 'clinical')) return 'HealthTech & Medical';
-        if (str_contains($all, 'cloud') || str_contains($all, 'code') || str_contains($all, 'dev') || str_contains($all, 'framework') || str_contains($all, 'php') || str_contains($all, 'software')) return 'Developer Tools & SaaS';
+        if (str_contains($all, 'photonic') || str_contains($all, 'supercomput') || str_contains($all, 'semiconductor') || str_contains($all, 'chip') || str_contains($all, 'hardware') || str_contains($all, 'optical') || str_contains($all, 'silicon')) return 'Photonic Supercomputing & AI Hardware';
+        if (str_contains($all, 'pay') || str_contains($all, 'bank') || str_contains($all, 'fintech') || str_contains($all, 'card') || str_contains($all, 'finance') || str_contains($all, 'razorpay') || str_contains($all, 'stripe')) return 'FinTech & Payments';
+        if (str_contains($all, 'health') || str_contains($all, 'med') || str_contains($all, 'patient') || str_contains($all, 'clinical') || str_contains($all, 'pharma')) return 'HealthTech & Medical';
+        if (str_contains($all, 'ai') || str_contains($all, 'intelligence') || str_contains($all, 'neural') || str_contains($all, 'model') || str_contains($all, 'machine learning')) return 'Artificial Intelligence & DeepTech';
+        if (str_contains($all, 'cloud') || str_contains($all, 'code') || str_contains($all, 'dev') || str_contains($all, 'framework') || str_contains($all, 'php') || str_contains($all, 'software') || str_contains($all, 'saas')) return 'Developer Tools & SaaS';
         if (str_contains($all, 'cyber') || str_contains($all, 'security') || str_contains($all, 'threat') || str_contains($all, 'auth')) return 'Cybersecurity';
-        if (str_contains($all, 'energy') || str_contains($all, 'solar') || str_contains($all, 'green') || str_contains($all, 'power')) return 'Clean Energy & Utilities';
+        if (str_contains($all, 'energy') || str_contains($all, 'solar') || str_contains($all, 'green') || str_contains($all, 'power')) return 'Clean Energy & DeepTech';
         if (str_contains($all, 'shop') || str_contains($all, 'store') || str_contains($all, 'ecommerce') || str_contains($all, 'cart')) return 'E-Commerce & Retail';
         return 'Technology & Digital Services';
     }
@@ -328,14 +330,16 @@ Return exact JSON format:
     {
         $text = strtolower($text);
         $tech = [];
+        if (str_contains($text, 'photonic') || str_contains($text, 'silicon') || str_contains($text, 'optical')) $tech[] = 'Silicon Photonics & Optical Interconnects';
+        if (str_contains($text, 'pytorch') || str_contains($text, 'tensorflow') || str_contains($text, 'cuda')) $tech[] = 'PyTorch / CUDA Acceleration';
         if (str_contains($text, 'laravel') || str_contains($text, 'php')) $tech[] = 'PHP / Laravel';
         if (str_contains($text, 'react') || str_contains($text, 'next')) $tech[] = 'React / Next.js';
         if (str_contains($text, 'vue') || str_contains($text, 'nuxt')) $tech[] = 'Vue.js';
-        if (str_contains($text, 'python') || str_contains($text, 'django') || str_contains($text, 'fastapi')) $tech[] = 'Python';
-        if (str_contains($text, 'aws') || str_contains($text, 'cloud')) $tech[] = 'AWS Cloud';
-        if (str_contains($text, 'stripe') || str_contains($text, 'payment')) $tech[] = 'Stripe Payments';
+        if (str_contains($text, 'python') || str_contains($text, 'django') || str_contains($text, 'fastapi')) $tech[] = 'Python AI Engine';
+        if (str_contains($text, 'aws') || str_contains($text, 'cloud') || str_contains($text, 'azure') || str_contains($text, 'gcp')) $tech[] = 'Hyperscale Cloud Infrastructure';
+        if (str_contains($text, 'stripe') || str_contains($text, 'payment') || str_contains($text, 'razorpay')) $tech[] = 'Stripe / Payments Gateway';
         if (str_contains($text, 'tailwind')) $tech[] = 'Tailwind CSS';
-        if (str_contains($text, 'docker') || str_contains($text, 'kubernetes')) $tech[] = 'Docker / K8s';
+        if (str_contains($text, 'docker') || str_contains($text, 'kubernetes') || str_contains($text, 'k8s')) $tech[] = 'Docker / Kubernetes';
 
         if (empty($tech)) {
             return 'Modern Web Stack, REST API, Cloud Infrastructure';
