@@ -63,11 +63,19 @@
         <h1 class="page-title" style="margin-bottom: 0;">{{ $client->name }}</h1>
     </div>
 
-    <div style="display: flex; gap: 10px;">
+    <div style="display: flex; gap: 10px; align-items: center;">
         <a href="{{ route('clients.edit', $client->id) }}" class="btn btn-secondary">
             <i data-lucide="edit" style="width: 15px; height: 15px;"></i>
             <span>Edit Details</span>
         </a>
+        <form action="/clients/{{ $client->id }}" method="POST" onsubmit="return confirm('Are you sure you want to permanently delete client {{ addslashes($client->name) }}?');" style="display: inline;">
+            @csrf
+            @method('DELETE')
+            <button type="submit" class="btn btn-secondary" style="color: var(--danger);" title="Delete Client">
+                <i data-lucide="trash" style="width: 15px; height: 15px;"></i>
+                <span>Delete</span>
+            </button>
+        </form>
     </div>
 </div>
 

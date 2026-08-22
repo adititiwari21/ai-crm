@@ -56,14 +56,21 @@
                             ${{ number_format($c->lifetime_value, 0) }}
                         </td>
                         <td>
-                            <div style="display: flex; gap: 8px;">
+                            <div style="display: flex; gap: 8px; align-items: center;">
                                 <a href="{{ route('clients.show', $c->id) }}" class="btn btn-secondary btn-sm" title="View 360° Profile">
                                     <i data-lucide="eye" style="width: 14px; height: 14px;"></i>
                                     <span>Profile</span>
                                 </a>
-                                <a href="{{ route('clients.edit', $c->id) }}" class="btn btn-secondary btn-sm" title="Edit Client">
+                                <button type="button" class="btn btn-secondary btn-sm" title="Quick Edit Client" onclick="openEditClientModal({{ $c->id }}, '{{ addslashes($c->name) }}', '{{ addslashes($c->company ?? '') }}', '{{ addslashes($c->email ?? '') }}', '{{ addslashes($c->phone ?? '') }}')">
                                     <i data-lucide="edit" style="width: 14px; height: 14px;"></i>
-                                </a>
+                                </button>
+                                <form action="/clients/{{ $c->id }}" method="POST" onsubmit="return confirm('Are you sure you want to delete client {{ addslashes($c->name) }}?');" style="display: inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-secondary btn-sm" style="color: var(--danger);" title="Delete Client">
+                                        <i data-lucide="trash" style="width: 14px; height: 14px;"></i>
+                                    </button>
+                                </form>
                             </div>
                         </td>
                     </tr>
@@ -78,4 +85,74 @@
         </table>
     </div>
 </div>
+
+<!-- Modal: Quick Edit Client -->
+<div class="modal-backdrop" id="editClientModal" style="display: none;">
+    <div class="modal-box card-p">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 32px; height: 32px; border-radius: 8px; background: linear-gradient(135deg, #4f46e5, #3b82f6); display: flex; align-items: center; justify-content: center; color: white;">
+                    <i data-lucide="edit-3" style="width: 18px; height: 18px;"></i>
+                </div>
+                <h3 style="font-size: 18px; font-weight: 700; color: var(--text-main);">Edit Client Account</h3>
+            </div>
+            <button type="button" onclick="closeEditClientModal()" style="background: none; border: none; color: var(--text-muted); cursor: pointer;">
+                <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+            </button>
+        </div>
+
+        <form action="" method="POST" id="editClientForm">
+            @csrf
+            @method('PUT')
+            <input type="hidden" name="from_index" value="1">
+
+            <div style="display: flex; flex-direction: column; gap: 14px;">
+                <div>
+                    <label class="form-label">Client Name *</label>
+                    <input type="text" name="name" id="editClientName" class="form-control" required>
+                </div>
+
+                <div>
+                    <label class="form-label">Company Name</label>
+                    <input type="text" name="company" id="editClientCompany" class="form-control" placeholder="e.g. Acme Corp">
+                </div>
+
+                <div>
+                    <label class="form-label">Email Address</label>
+                    <input type="email" name="email" id="editClientEmail" class="form-control" placeholder="client@company.com">
+                </div>
+
+                <div>
+                    <label class="form-label">Phone Number</label>
+                    <input type="text" name="phone" id="editClientPhone" class="form-control" placeholder="+1 (555) 000-0000">
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
+                    <button type="button" class="btn btn-secondary" onclick="closeEditClientModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i data-lucide="check" style="width: 15px; height: 15px;"></i>
+                        <span>Save Changes</span>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@push('scripts')
+<script>
+    function openEditClientModal(id, name, company, email, phone) {
+        document.getElementById('editClientForm').action = '/clients/' + id;
+        document.getElementById('editClientName').value = name;
+        document.getElementById('editClientCompany').value = company || '';
+        document.getElementById('editClientEmail').value = email || '';
+        document.getElementById('editClientPhone').value = phone || '';
+        document.getElementById('editClientModal').style.display = 'flex';
+    }
+
+    function closeEditClientModal() {
+        document.getElementById('editClientModal').style.display = 'none';
+    }
+</script>
+@endpush
 @endsection

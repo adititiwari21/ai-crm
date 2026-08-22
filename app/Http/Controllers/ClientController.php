@@ -59,13 +59,23 @@ class ClientController extends Controller
 
         $client->update($validated);
 
-        return redirect()->route('clients.show', $client->id)->with('success', 'Client updated successfully!');
+        if ($request->filled('from_index')) {
+            return redirect()->route('clients.index')->with('success', "Client '{$client->name}' updated successfully!");
+        }
+
+        return redirect()->route('clients.show', $client->id)->with('success', "Client '{$client->name}' updated successfully!");
     }
 
     public function destroy(Client $client)
     {
+        $name = $client->name;
+        // Safely unlink or remove child relations to avoid DB constraint failures
+        $client->activities()->delete();
+        $client->deals()->delete();
+        $client->invoices()->delete();
         $client->delete();
-        return redirect()->route('clients.index')->with('success', 'Client removed.');
+
+        return redirect()->route('clients.index')->with('success', "Client '{$name}' deleted successfully.");
     }
 
     public function addActivity(Request $request, Client $client)

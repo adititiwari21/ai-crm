@@ -13,7 +13,7 @@
     </div>
 
     <div class="card card-p">
-        <form action="{{ route('clients.update', $client->id) }}" method="POST">
+        <form action="/clients/{{ $client->id }}" method="POST">
             @csrf
             @method('PUT')
 
@@ -40,8 +40,17 @@
 
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
                     <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <button type="button" class="btn btn-secondary" style="color: var(--danger);" onclick="if(confirm('Are you sure you want to permanently delete this client?')) { document.getElementById('deleteClientForm').submit(); }">
+                        <i data-lucide="trash" style="width: 14px; height: 14px;"></i>
+                        <span>Delete Client</span>
+                    </button>
                 </div>
             </div>
+        </form>
+
+        <form action="/clients/{{ $client->id }}" method="POST" id="deleteClientForm" style="display: none;">
+            @csrf
+            @method('DELETE')
         </form>
     </div>
 </div>
