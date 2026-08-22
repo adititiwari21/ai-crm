@@ -230,14 +230,24 @@ Return exact JSON format:
         $leads = UserDetail::all();
 
         // 1. Revenue & Financials
-        if (str_contains($q, 'revenue') || str_contains($q, 'sales') || str_contains($q, 'income') || str_contains($q, 'money') || str_contains($q, 'financial')) {
+        if (str_contains($q, 'revenue') || str_contains($q, 'sales') || str_contains($q, 'income') || str_contains($q, 'money') || str_contains($q, 'financial') || str_contains($q, 'paisa') || str_contains($q, 'kamai') || str_contains($q, 'kitna') || str_contains($q, 'earning') || str_contains($q, 'cash') || str_contains($q, 'profit') || str_contains($q, 'forecast')) {
             $wonSum = $wonDeals->sum('amount');
-            return "### 📊 Live Financial & Revenue Intelligence\n\n" .
+            $currentMonthRevenue = Invoice::where('status', 'Paid')
+                ->whereMonth('created_at', now()->month)
+                ->whereYear('created_at', now()->year)
+                ->sum('amount');
+            $dayOfMonth = max(1, now()->day);
+            $daysInMonth = now()->daysInMonth;
+            $monthlyRunRate = ($currentMonthRevenue / $dayOfMonth) * $daysInMonth;
+
+            return "### 💰 Live Financial & Revenue Intelligence\n\n" .
                 "- **Total Collected Revenue (Paid Invoices):** `$" . number_format($totalRevenue, 2) . "`\n" .
-                "- **Pending Outstanding Receivables:** `$" . number_format($pendingRevenue, 2) . "` across **{$pendingInvoices->count()} invoices**\n" .
-                "- **Closed-Won Deal Bookings:** `$" . number_format($wonSum, 2) . "`\n" .
-                "- **Active Weighted Pipeline Value:** `$" . number_format($openDeals->sum('amount'), 2) . "`\n\n" .
-                "💡 **Executive Recommendation:** Follow up on the **" . $pendingInvoices->count() . " pending invoices** to accelerate immediate cash collections by `$" . number_format($pendingRevenue, 2) . "`.";
+                "- **Current Month Collected Sales:** `$" . number_format($currentMonthRevenue, 2) . "`\n" .
+                "- **Projected 30-Day Sales Forecast:** `$" . number_format($monthlyRunRate, 2) . "`\n" .
+                "- **Pending Outstanding Receivables:** `$" . number_format($pendingRevenue, 2) . "` across **{$pendingInvoices->count()} pending invoices**\n" .
+                "- **Closed-Won Bookings Value:** `$" . number_format($wonSum, 2) . "`\n" .
+                "- **Active Pipeline Value:** `$" . number_format($openDeals->sum('amount'), 2) . "` across **{$openDeals->count()} active deals**\n\n" .
+                "💡 **Executive Recommendation:** Collect the **" . $pendingInvoices->count() . " pending invoices** to immediately unlock `$" . number_format($pendingRevenue, 2) . "` in realized cash flow.";
         }
 
         // 2. Deals & Pipeline
