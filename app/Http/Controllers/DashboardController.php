@@ -20,11 +20,24 @@ class DashboardController extends Controller
 
         $totalSales = Sale::sum('amount');
 
-        $totalRevenue = Invoice::sum('amount');
+        $totalRevenue = Invoice::where('status', 'Paid')->sum('amount');
+        if ($totalRevenue <= 0) {
+            $totalRevenue = Sale::sum('amount');
+        }
 
         $pendingInvoices = Invoice::where('status', 'Pending')->count();
 
         $totalProducts = Product::count();
+
+        // Monthly Revenue & Sales Forecasting
+        $currentMonthSales = Sale::where('status', 'Paid')
+            ->whereMonth('sale_date', date('m'))
+            ->whereYear('sale_date', date('Y'))
+            ->sum('amount');
+
+        $monthlyRevenue = $currentMonthSales > 0 ? $currentMonthSales : $totalSales;
+        $dayOfMonth = max(1, (int)date('j'));
+        $monthlySalesForecast = $monthlyRevenue > 0 ? ($monthlyRevenue / $dayOfMonth) * 30 : 0;
 
         // =====================================================
         // USER / LEAD METRICS
@@ -68,6 +81,8 @@ class DashboardController extends Controller
             'totalClients',
             'totalSales',
             'totalRevenue',
+            'monthlyRevenue',
+            'monthlySalesForecast',
             'pendingInvoices',
             'totalProducts',
             'totalUsers',

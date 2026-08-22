@@ -60,7 +60,7 @@ When answering:
                     'parts' => [['text' => $prompt]],
                 ];
 
-                $response = Http::withHeaders([
+                $response = Http::timeout(6)->withHeaders([
                     'Content-Type' => 'application/json',
                 ])->post("{$this->baseUrl}{$this->model}:generateContent?key={$this->apiKey}", [
                     'system_instruction' => [
@@ -114,7 +114,7 @@ Return exact JSON format:
   \"generated_pitch\": \"A compelling, 3-paragraph personalized cold outreach email tailored to their pain points, highlighting how our CRM/AI solutions can help them scale.\"
 }";
 
-                $response = Http::post("{$this->baseUrl}{$this->model}:generateContent?key={$this->apiKey}", [
+                $response = Http::timeout(6)->post("{$this->baseUrl}{$this->model}:generateContent?key={$this->apiKey}", [
                     'contents' => [
                         ['parts' => [['text' => $prompt]]],
                     ],

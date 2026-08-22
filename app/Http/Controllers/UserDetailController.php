@@ -48,30 +48,37 @@ class UserDetailController extends Controller
 
     public function scrapeWebsite(Request $request)
     {
+        $websiteInput = trim($request->input('website', ''));
+        if (!empty($websiteInput) && !preg_match('#^https?://#i', $websiteInput)) {
+            $websiteInput = 'https://' . $websiteInput;
+        }
+
+        $request->merge(['website' => $websiteInput]);
+
         $request->validate([
             'website' => 'required|url|max:255',
         ]);
 
-        $website = trim($request->input('website'));
+        $website = $websiteInput;
 
         try {
-            // 1. Scrape website content
-            $context = stream_context_create([
-                'http' => [
-                    'method' => 'GET',
-                    'timeout' => 15,
-                    'ignore_errors' => true,
-                    'header' => "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36\r\nAccept: text/html,application/xhtml+xml\r\n",
-                ],
-                'ssl' => [
-                    'verify_peer' => false,
-                    'verify_peer_name' => false,
-                ],
-            ]);
+            // 1. Fetch website HTML via cURL for highest compatibility
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $website);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 4);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 6);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+            curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36');
+            $html = curl_exec($ch);
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
 
-            $html = @file_get_contents($website, false, $context);
-            if ($html === false || trim($html) === '') {
-                $html = "<html><head><title>Company Website</title></head><body><h1>Welcome</h1></body></html>";
+            if ($html === false || empty($html) || $httpCode >= 400) {
+                $domain = parse_url($website, PHP_URL_HOST) ?? $website;
+                $html = "<html><head><title>{$domain}</title></head><body><h1>{$domain} Digital Business</h1></body></html>";
             }
 
             // Extract Title

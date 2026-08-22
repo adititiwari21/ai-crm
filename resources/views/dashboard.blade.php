@@ -1645,14 +1645,20 @@
 
                 <div class="panel">
 
-                    <div class="panel-header">
+                    <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
 
-                        <h2>
-                            Revenue Overview
-                        </h2>
+                        <div>
+                            <h2>
+                                Revenue Overview & Monthly Forecasting
+                            </h2>
+                            <div style="font-size: 11.5px; color: #64748b; margin-top: 2px;">
+                                Monthly Sales: <strong>₹{{ number_format($monthlyRevenue, 2) }}</strong> &nbsp;|&nbsp; 
+                                30-Day Forecast: <strong style="color: #10b981;">₹{{ number_format($monthlySalesForecast, 2) }}</strong>
+                            </div>
+                        </div>
 
                         <div class="date-button">
-                            Live
+                            Live Telemetry
                         </div>
 
                     </div>

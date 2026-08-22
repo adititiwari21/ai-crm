@@ -44,6 +44,7 @@ Route::delete('/deals/{deal}', [DealController::class, 'destroy'])->name('deals.
 Route::get('/invoices', [InvoiceController::class, 'index'])->name('invoices.index');
 Route::post('/invoices', [InvoiceController::class, 'store'])->name('invoices.store');
 Route::post('/invoices/sync-site', [InvoiceController::class, 'syncFromUrl'])->name('invoices.sync');
+Route::post('/invoices/upload-pdf', [InvoiceController::class, 'uploadPdf'])->name('invoices.upload-pdf');
 Route::post('/api/v1/payment-webhook', [InvoiceController::class, 'webhook'])->name('api.payment.webhook');
 Route::get('/invoices/{invoice}/pdf', [InvoiceController::class, 'showPdf'])->name('invoices.pdf');
 Route::get('/invoices/{invoice}/edit', [InvoiceController::class, 'edit'])->name('invoices.edit');

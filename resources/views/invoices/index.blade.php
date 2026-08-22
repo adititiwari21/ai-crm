@@ -54,35 +54,48 @@
 
 <!-- 2. ACTIONS SPLIT: WEBSITE SYNC & CREATE INVOICE -->
 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px;">
-    <!-- TOOL A: AUTOMATED WEBSITE / HOSTINGER SYNC -->
+    <!-- TOOL A: AUTOMATED WEBSITE / HOSTINGER SYNC & PDF INGESTION -->
     <div class="card card-p" style="display: flex; flex-direction: column; justify-content: space-between;">
         <div>
             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
                 <span style="font-size: 20px;">🌐</span>
-                <h2 style="font-family: var(--font-heading); font-size: 17px; font-weight: 800; color: var(--text-main);">Automated Website & Payment Ingestion</h2>
+                <h2 style="font-family: var(--font-heading); font-size: 17px; font-weight: 800; color: var(--text-main);">Hostinger & Website Payment Ingestion Engine</h2>
             </div>
             <p style="font-size: 12.5px; color: var(--text-muted); line-height: 1.45; margin-bottom: 16px;">
-                Enter any website checkout URL, Hostinger invoice folder, or store orders link. The AI ETL engine scans the page, extracts paying clients, amounts & dates, and automatically records them as Paid Invoices!
+                Enter any website URL, Hostinger invoice folder link, or upload an invoice PDF directly. The AI ETL engine parses client details, payment amount & date, and updates revenue metrics & monthly forecasting in real-time!
             </p>
 
-            <form action="{{ route('invoices.sync') }}" method="POST">
+            <!-- 1. URL SCAN FORM -->
+            <form action="{{ route('invoices.sync') }}" method="POST" style="margin-bottom: 16px;">
                 @csrf
-                <div style="margin-bottom: 14px;">
-                    <label class="form-label">Website URL / Hostinger Folder *</label>
-                    <input type="url" name="website_url" class="form-control" placeholder="https://example.com/orders or https://hostinger-site.com/invoices" required>
+                <label class="form-label" style="font-weight: 700;">Hostinger Folder / Website URL</label>
+                <div style="display: flex; gap: 8px;">
+                    <input type="text" name="website_url" class="form-control" placeholder="https://my-hostinger-site.com/invoices/ or https://myshop.com" required style="flex: 1;">
+                    <button type="submit" class="btn btn-primary" style="background: linear-gradient(135deg, #10b981, #059669); white-space: nowrap;">
+                        <i data-lucide="zap" style="width: 15px; height: 15px;"></i>
+                        <span>Scan & Ingest</span>
+                    </button>
                 </div>
+            </form>
 
-                <button type="submit" class="btn btn-primary" style="background: linear-gradient(135deg, #10b981, #059669); width: 100%;">
-                    <i data-lucide="zap" style="width: 16px; height: 16px;"></i>
-                    <span>Scan & Ingest Website Payments</span>
-                </button>
+            <!-- 2. DIRECT PDF UPLOAD FORM -->
+            <form action="{{ route('invoices.upload-pdf') }}" method="POST" enctype="multipart/form-data" style="background: var(--bg-surface-hover); border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; margin-bottom: 14px;">
+                @csrf
+                <label class="form-label" style="font-weight: 700; margin-bottom: 6px; display: block;">Or Upload Invoice PDF File Directly</label>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <input type="file" name="invoice_pdf" accept=".pdf" class="form-control" required style="font-size: 12px; padding: 6px 10px;">
+                    <button type="submit" class="btn btn-primary" style="white-space: nowrap;">
+                        <i data-lucide="upload" style="width: 14px; height: 14px;"></i>
+                        <span>Parse PDF</span>
+                    </button>
+                </div>
             </form>
         </div>
 
-        <div style="background: var(--bg-body); border: 1px dashed var(--border-color); border-radius: 8px; padding: 10px 12px; font-size: 11.5px; color: var(--text-muted); margin-top: 14px; word-break: break-all;">
+        <div style="background: var(--bg-body); border: 1px dashed var(--border-color); border-radius: 8px; padding: 10px 12px; font-size: 11.5px; color: var(--text-muted); word-break: break-all;">
             <strong>⚡ Live Payment Webhook Endpoint:</strong><br>
             <code>POST {{ url('/api/v1/payment-webhook') }}</code><br>
-            <span style="font-size: 11px; color: var(--text-subtle);">Use in Shopify, WooCommerce, or Hostinger PHP scripts to auto-sync client payments.</span>
+            <span style="font-size: 11px; color: var(--text-subtle);">Connect Hostinger PHP scripts, WooCommerce, or Shopify webhooks to automatically record every client payment!</span>
         </div>
     </div>
 

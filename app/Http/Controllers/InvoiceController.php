@@ -93,6 +93,25 @@ class InvoiceController extends Controller
     }
 
     /**
+     * Direct PDF Invoice File Upload & Parsing.
+     */
+    public function uploadPdf(Request $request)
+    {
+        $request->validate([
+            'invoice_pdf' => 'required|file|mimes:pdf|max:10240',
+        ]);
+
+        $file = $request->file('invoice_pdf');
+        $result = $this->ingestionService->ingestFromUploadedPdf($file);
+
+        if ($result['success']) {
+            return redirect()->route('invoices.index')->with('success', $result['message']);
+        }
+
+        return redirect()->route('invoices.index')->with('error', $result['message'] ?? 'Failed to parse invoice PDF.');
+    }
+
+    /**
      * Live Payment Webhook Endpoint from external websites / Hostinger / Shopify.
      */
     public function webhook(Request $request)
