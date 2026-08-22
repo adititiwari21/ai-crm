@@ -148,11 +148,21 @@
         document.getElementById('editClientEmail').value = email || '';
         document.getElementById('editClientPhone').value = phone || '';
         document.getElementById('editClientModal').style.display = 'flex';
+        if (window.lucide) {
+            lucide.createIcons();
+        }
     }
 
     function closeEditClientModal() {
         document.getElementById('editClientModal').style.display = 'none';
     }
+
+    window.addEventListener('click', function(e) {
+        const modal = document.getElementById('editClientModal');
+        if (e.target === modal) {
+            closeEditClientModal();
+        }
+    });
 </script>
 @endpush
 @endsection

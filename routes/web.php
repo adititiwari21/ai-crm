@@ -26,7 +26,8 @@ Route::get('/clients', [ClientController::class, 'index'])->name('clients.index'
 Route::post('/clients', [ClientController::class, 'store'])->name('clients.store');
 Route::get('/clients/{client}', [ClientController::class, 'show'])->name('clients.show');
 Route::get('/clients/{client}/edit', [ClientController::class, 'edit'])->name('clients.edit');
-Route::put('/clients/{client}', [ClientController::class, 'update'])->name('clients.update');
+Route::match(['put', 'post'], '/clients/{client}', [ClientController::class, 'update'])->name('clients.update');
+Route::match(['delete', 'post'], '/clients/{client}/delete', [ClientController::class, 'destroy'])->name('clients.destroy.post');
 Route::delete('/clients/{client}', [ClientController::class, 'destroy'])->name('clients.destroy');
 Route::post('/clients/{client}/activity', [ClientController::class, 'addActivity'])->name('clients.activity');
 
