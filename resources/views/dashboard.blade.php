@@ -1832,15 +1832,15 @@
                     <div class="panel-header">
 
                         <h2>
-                            Recent Transactions
+                            💸 Live Client Payments (Who Paid How Much)
                         </h2>
 
                         <a
-                            href="{{ route('sales.index') }}"
+                            href="{{ route('invoices.index') }}"
                             target="_blank"
                             class="view-all"
                         >
-                            View All
+                            View All Invoices
                         </a>
 
                     </div>
@@ -1848,49 +1848,90 @@
 
                     <div class="list">
 
-                        @forelse($recentSales as $sale)
+                        @forelse($recentPayments as $payment)
 
                             <div class="list-item">
 
-                                <div class="item-icon item-blue">
-                                    🛒
+                                <div class="item-icon item-blue" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">
+                                    💰
                                 </div>
 
                                 <div class="item-info">
 
                                     <strong>
-                                        @if($sale->client)
-                                            {{ $sale->client->name }}
-                                        @else
-                                            Unknown Client
+                                        {{ $payment->client->name ?? ($payment->client->company ?? 'Direct Client') }}
+                                        @if(isset($payment->client->company) && $payment->client->company)
+                                            <span style="font-size: 11px; color: #64748b; font-weight: 500;">({{ $payment->client->company }})</span>
                                         @endif
                                     </strong>
 
                                     <small>
-                                        {{ $sale->description ?? 'Sales Transaction' }}
+                                        Invoice #{{ $payment->invoice_number }} • {{ $payment->due_date ? $payment->due_date->format('M d, Y') : ($payment->created_at ? $payment->created_at->format('M d, Y') : 'Payment Received') }}
                                     </small>
 
                                 </div>
 
-                                <div class="item-amount">
-                                    ₹{{ number_format($sale->amount, 2) }}
+                                <div class="item-amount" style="color: #059669; font-weight: 800;">
+                                    +${{ number_format($payment->amount, 2) }}
                                 </div>
 
                                 <div class="item-date">
-                                    {{ $sale->sale_date ?? '—' }}
+                                    {{ $payment->created_at ? $payment->created_at->diffForHumans() : 'Recently' }}
                                 </div>
 
-                                <div class="item-status status-paid">
-                                    Recorded
+                                <div class="item-status status-paid" style="background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; font-size: 11px; font-weight: 700;">
+                                    ✓ {{ $payment->status }}
                                 </div>
 
                             </div>
 
                         @empty
 
-                            <div class="empty">
-                                No transactions available yet.
-                            </div>
+                            @forelse($recentSales as $sale)
+
+                                <div class="list-item">
+
+                                    <div class="item-icon item-blue">
+                                        🛒
+                                    </div>
+
+                                    <div class="item-info">
+
+                                        <strong>
+                                            @if($sale->client)
+                                                {{ $sale->client->name }} ({{ $sale->client->company }})
+                                            @else
+                                                Direct Sales Transaction
+                                            @endif
+                                        </strong>
+
+                                        <small>
+                                            {{ $sale->description ?? 'Sales Revenue' }}
+                                        </small>
+
+                                    </div>
+
+                                    <div class="item-amount" style="color: #059669; font-weight: 800;">
+                                        +${{ number_format($sale->amount, 2) }}
+                                    </div>
+
+                                    <div class="item-date">
+                                        {{ $sale->sale_date ?? 'Today' }}
+                                    </div>
+
+                                    <div class="item-status status-paid">
+                                        ✓ Paid
+                                    </div>
+
+                                </div>
+
+                            @empty
+
+                                <div class="empty">
+                                    No client payments recorded yet. Ingest an invoice or sync payments to see real-time transactions!
+                                </div>
+
+                            @endforelse
 
                         @endforelse
 

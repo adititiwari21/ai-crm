@@ -48,6 +48,23 @@ class DashboardController extends Controller
         $analyzedCompanies = UserDetail::whereNotNull('website_title')->count();
 
         // =====================================================
+        // RECENT PAYMENTS & INVOICES (WHO PAID HOW MUCH)
+        // =====================================================
+
+        $recentPayments = Invoice::with('client')
+            ->where('status', 'Paid')
+            ->latest()
+            ->take(6)
+            ->get();
+
+        if ($recentPayments->isEmpty()) {
+            $recentPayments = Invoice::with('client')
+                ->latest()
+                ->take(6)
+                ->get();
+        }
+
+        // =====================================================
         // RECENT SALES
         // =====================================================
 
@@ -87,6 +104,7 @@ class DashboardController extends Controller
             'totalProducts',
             'totalUsers',
             'analyzedCompanies',
+            'recentPayments',
             'recentSales',
             'recentUsers',
             'recentCompanyAnalyses'
