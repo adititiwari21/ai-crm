@@ -11,7 +11,7 @@ RUN apt-get update && apt-get install -y \
     pdo_sqlite \
     pdo_pgsql \
     zip \
-    && a2enmod rewrite \
+    && a2enmod rewrite headers \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
@@ -31,6 +31,8 @@ ENV APP_DEBUG=false
 ENV DB_CONNECTION=pgsql
 ENV SESSION_DRIVER=file
 ENV CACHE_STORE=file
+ENV APP_URL=https://ai-crm-nowm.onrender.com
+ENV ASSET_URL=https://ai-crm-nowm.onrender.com
 
 RUN chown -R www-data:www-data \
     storage \
@@ -51,6 +53,8 @@ RUN cat > /etc/apache2/sites-available/000-default.conf <<'EOF'
         Require all granted
         DirectoryIndex index.php
     </Directory>
+
+    SetEnvIf X-Forwarded-Proto "^https$" HTTPS=on
 
     ErrorLog ${APACHE_LOG_DIR}/error.log
     CustomLog ${APACHE_LOG_DIR}/access.log combined

@@ -63,14 +63,14 @@
 
 <!-- 1. TOP QUICK SCRAPE BAR -->
 <div class="card card-p" style="margin-bottom: 24px; background: linear-gradient(135deg, #f8fafc, #ffffff); border: 1px solid var(--border-color);">
-    <form action="{{ route('scrape.company') }}" method="POST" onsubmit="document.getElementById('quickScrapeBtn').disabled = true; document.getElementById('quickScrapeBtn').innerHTML = 'Scraping...';">
+    <form action="/scrape-company" method="POST" onsubmit="document.getElementById('quickScrapeBtn').disabled = true; document.getElementById('quickScrapeBtn').innerHTML = 'Scraping...';">
         @csrf
         <label class="form-label" style="font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
             <i data-lucide="globe" style="width: 16px; height: 16px; color: var(--primary);"></i>
             <span>Instant Website & Company Scraper:</span>
         </label>
         <div style="display: flex; gap: 10px;">
-            <input type="text" name="website" class="form-control" placeholder="Enter company domain or URL (e.g. stripe.com, razorpay.com, linear.app)" required style="flex: 1; font-size: 13.5px;">
+            <input type="text" name="website" class="form-control" placeholder="Enter company domain or URL (e.g. https://lightmatter.co/ or stripe.com)" required style="flex: 1; font-size: 13.5px;">
             <button type="submit" class="btn btn-primary" id="quickScrapeBtn" style="white-space: nowrap; padding: 0 22px;">
                 <i data-lucide="zap" style="width: 16px; height: 16px;"></i>
                 <span>Scrape & Enrich</span>
@@ -197,12 +197,12 @@
             </button>
         </div>
 
-        <form action="{{ route('scrape.company') }}" method="POST" id="modalScrapeForm">
+        <form action="/scrape-company" method="POST" id="modalScrapeForm">
             @csrf
             <div style="display: flex; flex-direction: column; gap: 14px;">
                 <div>
                     <label class="form-label">Target Website URL / Domain *</label>
-                    <input type="text" name="website" id="scrapeTargetUrl" class="form-control" placeholder="e.g. stripe.com, razorpay.com, or https://linear.app" required>
+                    <input type="text" name="website" id="scrapeTargetUrl" class="form-control" placeholder="e.g. https://lightmatter.co/ or stripe.com" required>
                 </div>
                 <div id="scrapeLoadingState" style="display: none; padding: 14px; background: var(--bg-surface-hover); border-radius: var(--radius-sm); align-items: center; gap: 12px;">
                     <i data-lucide="loader-2" class="spin" style="color: var(--primary);"></i>

@@ -66,7 +66,7 @@
             </p>
 
             <!-- 1. URL SCAN FORM -->
-            <form action="{{ route('invoices.sync') }}" method="POST" style="margin-bottom: 16px;">
+            <form action="/invoices/sync-site" method="POST" style="margin-bottom: 16px;">
                 @csrf
                 <label class="form-label" style="font-weight: 700;">Hostinger Folder / Website URL</label>
                 <div style="display: flex; gap: 8px;">
@@ -79,7 +79,7 @@
             </form>
 
             <!-- 2. DIRECT PDF UPLOAD FORM -->
-            <form action="{{ route('invoices.upload-pdf') }}" method="POST" enctype="multipart/form-data" style="background: var(--bg-surface-hover); border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; margin-bottom: 14px;">
+            <form action="/invoices/upload-pdf" method="POST" enctype="multipart/form-data" style="background: var(--bg-surface-hover); border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; margin-bottom: 14px;">
                 @csrf
                 <label class="form-label" style="font-weight: 700; margin-bottom: 6px; display: block;">Or Upload Invoice PDF File Directly</label>
                 <div style="display: flex; gap: 8px; align-items: center;">
@@ -107,7 +107,7 @@
         </div>
         <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 16px;">Generate a branded invoice for existing clients or enter direct billing amounts.</p>
 
-        <form action="{{ route('invoices.store') }}" method="POST">
+        <form action="/invoices" method="POST">
             @csrf
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 10px;">
                 <div>

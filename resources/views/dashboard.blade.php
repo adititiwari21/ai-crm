@@ -1205,13 +1205,13 @@
                 ☰
             </div>
 
-            <form action="{{ route('scrape.company') }}" method="POST" class="search">
+            <form action="/scrape-company" method="POST" class="search">
                 @csrf
                 <span>⌕</span>
                 <input
                     type="text"
                     name="website"
-                    placeholder="Search or scrape any website (e.g. stripe.com)..."
+                    placeholder="Search or scrape any website (e.g. https://lightmatter.co/ or stripe.com)..."
                     required
                 >
             </form>
@@ -1984,12 +1984,12 @@
                     </div>
 
                     <!-- DIRECT SCRAPE INPUT -->
-                    <form action="{{ route('scrape.company') }}" method="POST" style="display: flex; gap: 8px; margin-bottom: 14px;">
+                    <form action="/scrape-company" method="POST" style="display: flex; gap: 8px; margin-bottom: 14px;">
                         @csrf
                         <input
                             type="text"
                             name="website"
-                            placeholder="Enter company website to scrape (e.g. stripe.com)..."
+                            placeholder="Enter company website to scrape (e.g. https://lightmatter.co/)..."
                             required
                             style="flex: 1; padding: 8px 12px; border-radius: 8px; border: 1px solid #e2e8f0; background: #f8fafc; font-size: 12.5px; color: #0f172a; outline: none;"
                         >
