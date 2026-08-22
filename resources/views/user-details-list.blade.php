@@ -47,7 +47,7 @@
     }
 </style>
 
-<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 16px;">
     <div>
         <h1 class="page-title">AI Lead Intelligence & Website Scraper</h1>
         <p class="page-subtitle">Scrape any company website to extract tech stacks, generate AI lead scores, and draft tailored cold outreach emails.</p>
@@ -56,12 +56,35 @@
     <div style="display: flex; gap: 12px;">
         <button type="button" class="btn btn-primary" onclick="openScrapeModal()">
             <i data-lucide="sparkles" style="width: 16px; height: 16px;"></i>
-            <span>Scrape & Enrich Website</span>
+            <span>+ Scrape New Website</span>
         </button>
     </div>
 </div>
 
+<!-- 1. TOP QUICK SCRAPE BAR -->
+<div class="card card-p" style="margin-bottom: 24px; background: linear-gradient(135deg, #f8fafc, #ffffff); border: 1px solid var(--border-color);">
+    <form action="{{ route('scrape.company') }}" method="POST" onsubmit="document.getElementById('quickScrapeBtn').disabled = true; document.getElementById('quickScrapeBtn').innerHTML = 'Scraping...';">
+        @csrf
+        <label class="form-label" style="font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+            <i data-lucide="globe" style="width: 16px; height: 16px; color: var(--primary);"></i>
+            <span>Instant Website & Company Scraper:</span>
+        </label>
+        <div style="display: flex; gap: 10px;">
+            <input type="text" name="website" class="form-control" placeholder="Enter company domain or URL (e.g. stripe.com, razorpay.com, linear.app)" required style="flex: 1; font-size: 13.5px;">
+            <button type="submit" class="btn btn-primary" id="quickScrapeBtn" style="white-space: nowrap; padding: 0 22px;">
+                <i data-lucide="zap" style="width: 16px; height: 16px;"></i>
+                <span>Scrape & Enrich</span>
+            </button>
+        </div>
+    </form>
+</div>
+
 <div class="card" style="overflow: hidden;">
+    <div style="padding: 16px 20px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+        <h2 style="font-family: var(--font-heading); font-size: 16px; font-weight: 800; color: var(--text-main);">Scraped Lead Records & AI Intel</h2>
+        <span class="badge badge-blue">{{ $userDetails->count() }} Scraped Profiles</span>
+    </div>
+
     <div class="table-responsive">
         <table class="crm-table">
             <thead>
@@ -150,7 +173,7 @@
                 @empty
                     <tr>
                         <td colspan="6" style="text-align: center; padding: 40px; color: var(--text-muted);">
-                            No scraped leads yet. Click "Scrape & Enrich Website" to start capturing intelligence!
+                            No scraped leads yet. Enter a website above or click "Scrape New Website" to start capturing intelligence!
                         </td>
                     </tr>
                 @endforelse
@@ -174,19 +197,20 @@
             </button>
         </div>
 
-        <form onsubmit="executeScrape(event)">
+        <form action="{{ route('scrape.company') }}" method="POST" id="modalScrapeForm">
+            @csrf
             <div style="display: flex; flex-direction: column; gap: 14px;">
                 <div>
-                    <label class="form-label">Target Website URL *</label>
-                    <input type="url" id="scrapeTargetUrl" class="form-control" placeholder="https://linear.app" required>
+                    <label class="form-label">Target Website URL / Domain *</label>
+                    <input type="text" name="website" id="scrapeTargetUrl" class="form-control" placeholder="e.g. stripe.com, razorpay.com, or https://linear.app" required>
                 </div>
-                <div id="scrapeLoadingState" style="display: none; padding: 16px; background: var(--bg-surface-hover); border-radius: var(--radius-sm); align-items: center; gap: 12px;">
+                <div id="scrapeLoadingState" style="display: none; padding: 14px; background: var(--bg-surface-hover); border-radius: var(--radius-sm); align-items: center; gap: 12px;">
                     <i data-lucide="loader-2" class="spin" style="color: var(--primary);"></i>
-                    <div style="font-size: 13px; color: var(--text-main);">Scraping website with BeautifulSoup & analyzing with AI Intelligence...</div>
+                    <div style="font-size: 13px; color: var(--text-main);">Scraping website & generating AI intelligence...</div>
                 </div>
                 <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
                     <button type="button" class="btn btn-secondary" onclick="closeScrapeModal()">Cancel</button>
-                    <button type="submit" class="btn btn-primary" id="btnScrapeRun">
+                    <button type="submit" class="btn btn-primary" id="btnScrapeRun" onclick="document.getElementById('scrapeLoadingState').style.display='flex';">
                         <i data-lucide="zap" style="width: 15px; height: 15px;"></i>
                         <span>Start Enrichment</span>
                     </button>

@@ -130,21 +130,31 @@ class UserDetailController extends Controller
                 ]
             );
 
-            return response()->json([
-                'success' => true,
-                'website' => $website,
-                'company' => $companyName,
-                'lead_score' => $aiData['lead_score'],
-                'industry' => $aiData['industry'],
-                'ai_summary' => $aiData['ai_summary'],
-                'lead_id' => $lead->id,
-            ]);
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'website' => $website,
+                    'company' => $companyName,
+                    'lead_score' => $aiData['lead_score'],
+                    'industry' => $aiData['industry'],
+                    'ai_summary' => $aiData['ai_summary'],
+                    'lead_id' => $lead->id,
+                ]);
+            }
+
+            return redirect()->route('user-details.list')
+                ->with('success', "Website '{$companyName}' scraped & enriched! Lead Score: {$aiData['lead_score']}/100, Industry: {$aiData['industry']}");
         } catch (\Throwable $e) {
-            return response()->json([
-                'success' => false,
-                'error' => $e->getMessage(),
-                'website' => $website,
-            ]);
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'error' => $e->getMessage(),
+                    'website' => $website,
+                ]);
+            }
+
+            return redirect()->route('user-details.list')
+                ->with('error', 'Error scraping website: ' . $e->getMessage());
         }
     }
 
