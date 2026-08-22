@@ -142,7 +142,7 @@ class UserDetailController extends Controller
                 ]);
             }
 
-            return redirect()->route('user-details.list')
+            return back()
                 ->with('success', "Website '{$companyName}' scraped & enriched! Lead Score: {$aiData['lead_score']}/100, Industry: {$aiData['industry']}");
         } catch (\Throwable $e) {
             if ($request->expectsJson() || $request->ajax()) {
@@ -153,7 +153,7 @@ class UserDetailController extends Controller
                 ]);
             }
 
-            return redirect()->route('user-details.list')
+            return back()
                 ->with('error', 'Error scraping website: ' . $e->getMessage());
         }
     }
